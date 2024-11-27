@@ -1,0 +1,99 @@
+.attendeesPage {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  .addFileSection {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .plusButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .plusButton:hover {
+    transform: scale(1.1);
+  }
+  
+  .addFileText {
+    font-size: 16px;
+    color: #244855;
+    margin: 0;
+  }
+  
+  .attendeeList {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  .attendeeItem {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .attendeeName {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .attendeePhone {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .attendeeStatus {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    flex: 1;
+    text-align: right;
+  }
+  
+  .statusCheckedIn {
+    color: green;
+  }
+  
+  .statusNotCheckedIn {
+    color: red;
+  }
+  
+  
+  .attendeeListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #244855;
+  }
+  
+  .headerItem {
+    padding: 5px;
+    text-align: left;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Specific for Status header */
+  .statusHeader {
+    justify-content: flex-end;
+  }
+  
