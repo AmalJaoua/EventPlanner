@@ -1,0 +1,128 @@
+.eventsPage {
+    margin: 40px;
+  }
+  
+  .headerSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .plusButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+  }
+  
+  .plusButton:hover {
+    transform: scale(1.1);
+  }
+  
+  h2 {
+    font-size: 28px;
+    color: #244855;
+    margin: 0;
+  }
+  
+  h3 {
+    font-size: 24px;
+    color: #244855;
+    margin-bottom: 10px;
+  }
+  
+  .eventList {
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+  }
+  
+  .eventItem {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .eventName {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .eventDate {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+    flex: 1;
+    min-width: 120px; 
+    text-align: center;
+  }
+  
+  .eventActions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .editBtn,
+  .deleteBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+  .viewDetailsBtn {
+    padding: 8px 16px;
+    background-color: #244855;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .viewDetailsBtn:hover {
+    background-color: #1a3d4e;
+  }
+  
+  .eventListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #244855;
+  }
+  
+  .headerItem {
+    padding: 10px;
+    text-align: left;
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+  }
+  .dateHeader {
+    justify-content: center;
+  }
+  .actionHeader {
+    justify-content: end;
+    padding-right: 40px;
+  }
+  
+  .editBtn {
+    color: #4C8BFF; 
+  }
+  
+  .deleteBtn {
+    color: #E64833; }
+  
+  h3 + .eventList {
+    margin-top: 10px;
+  }

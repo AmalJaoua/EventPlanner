@@ -5,6 +5,7 @@ import Signup from './components/Signup';
 import Login from './components/Login'; 
 import ManageEvent from './components/ManageEvent';  
 import Landing from './components/Landing';
+import YourEvents from './components/YourEvents';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/event/:id" element={<ManageEvent />} />
+        <Route path="/yourevents" element={<YourEvents />} />
       </Routes>
     </Router>
   );
