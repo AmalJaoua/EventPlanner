@@ -1,0 +1,67 @@
+/* DeleteModal.css */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure modal is on top */
+    backdrop-filter: blur(5px); /* Blur the background */
+  }
+  
+  .modalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  textarea {
+    width: 75%;
+    height: 80px;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .modalButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .deleteBtn:hover  {
+    background-color: #E64833;
+    color: white !important;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .deleteBtn1{
+    background-color: #E64833;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer; 
+  }
+  .discardBtn {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .discardBtn:hover {
+    background-color: #ccc;
+  }
+  
