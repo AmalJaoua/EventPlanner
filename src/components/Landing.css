@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #fbe9d0;
+  }
+  
+  .landingPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    color: #244855;
+  }
+  
+  .title {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #e64833;
+  }
+  
+  .description {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+    color: #874f41;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .signup {
+    background-color: #244855;
+    color: #fbe9d0;
+  }
+  
+  .signup:hover {
+    background-color: #90aead;
+  }
+  
+  .login {
+    background-color: #e64833;
+    color: #fbe9d0;
+  }
+  
+  .login:hover {
+    background-color: #874f41;
+  }
+  
