@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react'; 
 import './YourEvents.css';
 import { Link } from 'react-router-dom';
-import Delete from './Delete';  // Make sure the Delete component is correctly imported
+import Delete from './Delete';  
+import RequestEvent from './RequestEvent'; 
 
 const YourEvents = () => {
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(false);  // To control modal visibility
-  const [eventToDelete, setEventToDelete] = useState(null);  // Store the event to delete
+  const [showModal, setShowModal] = useState(false);  
+  const [showRequestEventModal, setShowRequestEventModal] = useState(false); 
+  const [eventToDelete, setEventToDelete] = useState(null);  
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -28,25 +30,32 @@ const YourEvents = () => {
   const pastEvents = events.filter(event => new Date(event.date) <= new Date());
 
   const handleDeleteClick = (eventId) => {
-    setEventToDelete(eventId); // Set the event to delete
-    setShowModal(true); // Show the delete modal
+    setEventToDelete(eventId); 
+    setShowModal(true);
   };
 
   const handleDelete = () => {
-    // Handle the event deletion here (e.g., API call)
-    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete)); // Remove event from state
-    setShowModal(false); // Close the modal
+    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete)); 
+    setShowModal(false); 
   };
 
   const handleModalClose = () => {
-    setShowModal(false); // Close the modal
+    setShowModal(false); 
+  };
+
+  const handleRequestEventClick = () => {
+    setShowRequestEventModal(true);
+  };
+
+  const handleRequestEventClose = () => {
+    setShowRequestEventModal(false);
   };
 
   return (
     <div className="eventsPage">
       <div className="headerSection">
         <h2>Your Events</h2>
-        <button className="plusButton">
+        <button className="plusButton" onClick={handleRequestEventClick}>
           <Plus size={30} color="#244855" />
         </button>
       </div>
@@ -102,6 +111,10 @@ const YourEvents = () => {
           onDelete={handleDelete}
           eventId={eventToDelete} 
         />
+      )}
+
+      {showRequestEventModal && (
+        <RequestEvent onClose={handleRequestEventClose} />
       )}
     </div>
   );
