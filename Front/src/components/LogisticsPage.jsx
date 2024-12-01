@@ -1,36 +1,17 @@
 import React, { useState } from 'react';
 import './LogisticsPage.css';
 
-const LocalsForm = () => (
-  <form className="logisticsForm">
-    <label htmlFor="localsSelect">Select a Local:</label>
-    <select id="localsSelect" name="local">
-      <option value="A215">A215</option>
-      <option value="A214">A214</option>
-      <option value="B215">B215</option>
-    </select>
-    <label htmlFor="localMessage">Message:</label>
-    <textarea id="localMessage" name="message" placeholder="Enter your message..." rows="4"></textarea>
-    <button type="submit">Submit</button>
-  </form>
-);
-
-const MaterialsForm = () => (
-  <form className="logisticsForm">
-    <label htmlFor="materialsSelect">Select a Material:</label>
-    <select id="materialsSelect" name="material">
-      <option value="Projector">Projector</option>
-      <option value="Light">Light</option>
-      <option value="Tele">Tele</option>
-    </select>
-    <label htmlFor="materialMessage">Message:</label>
-    <textarea id="materialMessage" name="message" placeholder="Enter your message..." rows="4"></textarea>
-    <button type="submit">Submit</button>
-  </form>
-);
-
 const LogisticsPage = () => {
-  const [activeComponent, setActiveComponent] = useState('Locals');
+  const [activeTab, setActiveTab] = useState('locals'); // Default tab is 'locals'
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevents default form submission
+    alert('Your request has been sent!'); // Displays an alert
+  };
 
   return (
     <div className="logisticsPage">
@@ -38,21 +19,57 @@ const LogisticsPage = () => {
       <p>Here you can manage event logistics.</p>
       <div className="buttonGroup">
         <button
-          className={`toggleButton ${activeComponent === 'Locals' ? 'active' : ''}`}
-          onClick={() => setActiveComponent('Locals')}
+          className={`toggleButton ${activeTab === 'locals' ? 'active' : ''}`}
+          onClick={() => handleTabClick('locals')}
         >
           Locals
         </button>
         <button
-          className={`toggleButton ${activeComponent === 'Materials' ? 'active' : ''}`}
-          onClick={() => setActiveComponent('Materials')}
+          className={`toggleButton ${activeTab === 'materials' ? 'active' : ''}`}
+          onClick={() => handleTabClick('materials')}
         >
           Materials
         </button>
       </div>
       <div className="contentArea">
-        {activeComponent === 'Locals' && <LocalsForm />}
-        {activeComponent === 'Materials' && <MaterialsForm />}
+        {activeTab === 'locals' && (
+          <form className="logisticsForm" onSubmit={handleSubmit}>
+            <label htmlFor="localSelect">Select Local:</label>
+            <select id="localSelect" name="local" required>
+              <option value="">Select...</option>
+              <option value="A215">A215</option>
+              <option value="A214">A214</option>
+              <option value="B215">B215</option>
+            </select>
+            <label htmlFor="localMessage">Message:</label>
+            <textarea
+              id="localMessage"
+              name="message"
+              placeholder="Add your message here..."
+              required
+            ></textarea>
+            <button type="submit">Submit</button>
+          </form>
+        )}
+        {activeTab === 'materials' && (
+          <form className="logisticsForm" onSubmit={handleSubmit}>
+            <label htmlFor="materialSelect">Select Material:</label>
+            <select id="materialSelect" name="material" required>
+              <option value="">Select...</option>
+              <option value="projector">Projector</option>
+              <option value="light">Light</option>
+              <option value="tele">Tele</option>
+            </select>
+            <label htmlFor="materialMessage">Message:</label>
+            <textarea
+              id="materialMessage"
+              name="message"
+              placeholder="Add your message here..."
+              required
+            ></textarea>
+            <button type="submit">Submit</button>
+          </form>
+        )}
       </div>
     </div>
   );
