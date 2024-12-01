@@ -13,3 +13,11 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+db.sequelize.sync()
+  .then(() => {
+    console.log('Database synced!');
+  })
+  .catch((error) => {
+    console.error('Error syncing database:', error);
+  });
