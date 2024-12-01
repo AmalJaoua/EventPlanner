@@ -3,7 +3,7 @@ require('dotenv').config(); // Load environment variables from .env
 const app = express();
 const { sequelize } = require('./models'); // Import sequelize instance
 const authRoutes = require('./routes/auth.routes');
-
+const userRoutes = require('./routes/user.routes');
 
 const PORT = process.env.PORT || 3000;
 
@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use('/auth', authRoutes); // Authentication routes (signup/login)
-
+app.use('/user', userRoutes);
 
 // Test route
 app.get('/', (req, res) => {
