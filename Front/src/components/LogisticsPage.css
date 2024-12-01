@@ -1,0 +1,95 @@
+.logisticsPage {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  h2 {
+    color: #244855;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin: 0 0 20px;
+    color: #555;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .toggleButton {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .toggleButton.active {
+    background-color: #244855;
+    color: #fff;
+  }
+  
+  .toggleButton:hover {
+    background-color: #1a3440;
+    color: #fff;
+  }
+  
+  .contentArea {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .logisticsForm {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+  }
+  
+  .logisticsForm label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .logisticsForm select,
+  .logisticsForm textarea,
+  .logisticsForm button {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+  .logisticsForm select {
+    background-color: #f9f9f9;
+  }
+  
+  .logisticsForm textarea {
+    resize: none;
+    height: 80px; 
+    width: 95%; 
+  }
+  
+  .logisticsForm button {
+    background-color: #244855;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .logisticsForm button:hover {
+    background-color: #1a3440;
+  }
+  
