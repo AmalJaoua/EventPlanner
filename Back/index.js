@@ -4,6 +4,7 @@ const app = express();
 const { sequelize } = require('./models'); // Import sequelize instance
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
+const eventRoutes = require('./routes/event.routes');
 
 const PORT = process.env.PORT || 3000;
 
@@ -13,6 +14,7 @@ app.use(express.json());
 // Routes
 app.use('/auth', authRoutes); // Authentication routes (signup/login)
 app.use('/user', userRoutes);
+app.use('/events', eventRoutes);  // Corrected this line
 
 // Test route
 app.get('/', (req, res) => {
