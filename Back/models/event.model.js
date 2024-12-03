@@ -36,7 +36,12 @@ module.exports = (sequelize, DataTypes) => {
     otherKey: 'materialId',         // Other foreign key in the junction table
     as: 'materials',                // Alias for accessing related materials
   });
-
+  Event.belongsToMany(models.Local, {
+    through: models.LocalsXEvent, // Junction table model
+    foreignKey: 'eventId',        // Foreign key in the junction table
+    otherKey: 'localId',          // Other foreign key in the junction table
+    as: 'locals',                 // Alias for accessing related locals
+  });
     return Event;
   };
   
