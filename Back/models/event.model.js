@@ -30,6 +30,12 @@ module.exports = (sequelize, DataTypes) => {
         as: 'user',  // Alias to access the user who created the event
       });
     };
+    Event.hasMany(models.Attendee, {
+      foreignKey: 'eventId',  // Foreign key linking attendees to events
+      as: 'attendees',        // Alias for accessing attendees of an event
+      onDelete: 'CASCADE',    // Deletes attendees if the event is deleted
+    });
+
     Event.belongsToMany(models.Material, {
     through: models.MaterialXEvent, // Junction table model
     foreignKey: 'eventId',          // Foreign key in the junction table
