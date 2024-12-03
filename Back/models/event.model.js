@@ -30,7 +30,13 @@ module.exports = (sequelize, DataTypes) => {
         as: 'user',  // Alias to access the user who created the event
       });
     };
-  
+    Event.belongsToMany(models.Material, {
+    through: models.MaterialXEvent, // Junction table model
+    foreignKey: 'eventId',          // Foreign key in the junction table
+    otherKey: 'materialId',         // Other foreign key in the junction table
+    as: 'materials',                // Alias for accessing related materials
+  });
+
     return Event;
   };
   
