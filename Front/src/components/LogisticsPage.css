@@ -92,4 +92,24 @@
   .logisticsForm button:hover {
     background-color: #1a3440;
   }
+  .reservationTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .reservationTable th,
+  .reservationTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .reservationTable th {
+    background-color: #f4f4f4;
+  }
+  
+  .reservationTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
   

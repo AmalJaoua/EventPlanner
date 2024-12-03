@@ -1,21 +1,27 @@
 .manageEvent {
   display: flex;
-  justify-content: center;
-  height: 97vh; /* Full viewport height */
+  height: 100vh; /* Full viewport height */
   background-color: #f9f9f9;
+  overflow: hidden; /* Prevents scrolling on the overall page */
 }
 
 
-/* Main content styles */
+/* Main content container styles */
 .mainContent {
-  width: 75%;
-  padding: 30px;
+  flex: 1; /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Full height for container */
+  overflow-y: auto; /* Enable vertical scrolling within the container */
   background-color: #ffffff;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Navbar styles */
 nav {
-  margin-bottom: 20px;
+  flex-shrink: 0; /* Prevent navbar from shrinking */
+  background-color: #f4f4f4;
+  padding: 10px;
   text-align: center;
 }
 
@@ -35,5 +41,3 @@ nav button:hover {
   background-color: #de250d;
   transform: scale(1.05); /* Slightly enlarge on hover */
 }
-
-
