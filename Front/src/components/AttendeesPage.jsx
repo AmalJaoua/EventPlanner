@@ -4,6 +4,7 @@ import './AttendeesPage.css';
 
 const AttendeesPage = () => {
   const [attendees, setAttendees] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const fetchAttendees = async () => {
@@ -18,8 +19,15 @@ const AttendeesPage = () => {
     fetchAttendees();
   }, []);
 
-  const handleAddFileClick = () => {
-    console.log("Add file button clicked");
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === 'text/csv') {
+      setSelectedFile(file);
+      alert(`File "${file.name}" selected.`);
+    } else {
+      alert('Please upload a valid CSV file.');
+      e.target.value = ''; // Reset file input
+    }
   };
 
   return (
@@ -27,9 +35,19 @@ const AttendeesPage = () => {
       <h2>Manage Attendees</h2>
       <p>Here you can manage event attendees.</p>
       <div className="addFileSection">
-        <button className="plusButton" onClick={handleAddFileClick}>
+        <button
+          className="plusButton"
+          onClick={() => document.getElementById('fileInput').click()}
+        >
           <Plus size={24} color="#244855" />
         </button>
+        <input
+          id="fileInput"
+          type="file"
+          accept=".csv"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
         <p className="addFileText">Add file of attendees</p>
       </div>
 
