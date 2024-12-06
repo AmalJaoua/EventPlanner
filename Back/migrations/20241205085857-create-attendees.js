@@ -18,7 +18,7 @@ module.exports = {
         },
       },
       status: {
-        type: Sequelize.STRING,
+        type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: 'Pending',
       },
