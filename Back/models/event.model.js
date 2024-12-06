@@ -26,12 +26,11 @@ module.exports = (sequelize, DataTypes) => {
   // Define associations
   Event.associate = (models) => {
     // BelongsTo association with User
-    Event.belongsTo(models.User, {
-      foreignKey: 'userId', // Foreign key to associate Event with User
-      as: 'user',          // Alias to access the user who created the event
-      onDelete: 'CASCADE', // Ensure referential integrity
-      onUpdate: 'CASCADE',
-    });
+      Event.belongsToMany(models.User, {
+        through: models.UsersXEvents,
+        foreignKey: 'eventId',
+      });
+    
 
     // HasMany association with Attendee
     Event.hasMany(models.Attendee, {

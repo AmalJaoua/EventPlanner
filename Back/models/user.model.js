@@ -30,9 +30,9 @@ module.exports = (sequelize, DataTypes) => {
   
     
     User.associate = (models) => {
-      User.hasMany(models.Event, {
+      User.belongsToMany(models.Event, {
+        through: models.UsersXEvents,
         foreignKey: 'userId',
-        as: 'events', 
       });
     };
   
