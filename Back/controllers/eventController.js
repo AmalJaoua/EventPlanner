@@ -68,53 +68,51 @@ exports.getEventById = async (req, res) => {
 // };
 
 
-// Get Locals of an Event
-exports.getLocalsOfEvent = async (req, res) => {
-  try {
-    const { eventId } = req.params;
+// Get Materials for a specific event
+exports.getMaterialsByEvent = async (req, res) => {
+  const { eventId } = req.params;
 
-    const event = await Event.findByPk(eventId, {
-      include: [
-        {
-          model: Local,
-          as: 'locals',
-        },
-      ],
+  if (!eventId) {
+    return res.status(400).json({ message: "Event ID is required." });
+  }
+
+  try {
+    // Fetch materials associated with the event
+    const materials = await db.Material.findAll({
+      include: {
+        model: db.Event,
+        where: { id: eventId }, // Filter by the specific event ID
+        through: { attributes: [] }, // Exclude the join table attributes
+      },
     });
 
-    if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    res.json(event.locals);
+    res.status(200).json({ message: "Materials retrieved successfully.", data: materials });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ message: "Error retrieving materials.", error: error.message });
   }
 };
 
-// Get Materials of an Event
-exports.getMaterialsOfEvent = async (req, res) => {
-  try {
-    const { eventId } = req.params;
+// Get Locals for a specific event
+exports.getLocalsByEvent = async (req, res) => {
+  const { eventId } = req.params;
 
-    const event = await Event.findByPk(eventId, {
-      include: [
-        {
-          model: Material,
-          as: 'materials',
-        },
-      ],
+  if (!eventId) {
+    return res.status(400).json({ message: "Event ID is required." });
+  }
+
+  try {
+    // Fetch locals associated with the event
+    const locals = await db.Local.findAll({
+      include: {
+        model: db.Event,
+        where: { id: eventId }, // Filter by the specific event ID
+        through: { attributes: [] }, // Exclude the join table attributes
+      },
     });
 
-    if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    res.json(event.materials);
+    res.status(200).json({ message: "Locals retrieved successfully.", data: locals });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ message: "Error retrieving locals.", error: error.message });
   }
 };
 // Delete an event
