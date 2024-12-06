@@ -1,24 +1,17 @@
 'use strict';
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('MaterialXEvents', {
-      materialId: {
+    await queryInterface.createTable('Materials', {
+      id: {
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Materials',
-          key: 'id',
-        },
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      name: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
-      eventId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Events',
-          key: 'id',
-        },
-        allowNull: false,
-      },
-      quantityUsed: {
+      quantity: {
         type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: 0,
@@ -28,6 +21,6 @@ module.exports = {
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable('MaterialXEvents');
+    await queryInterface.dropTable('Materials');
   },
 };

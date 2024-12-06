@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Locals', // Name of the Local table
         key: 'id',
       },
+      primaryKey: true,
     },
     eventId: {
       type: DataTypes.INTEGER,
@@ -15,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Events', // Name of the Event table
         key: 'id',
       },
+      primaryKey: true,
     },
   }, { tableName: 'LocalXEvent' }); // Explicit table name for junction table
 

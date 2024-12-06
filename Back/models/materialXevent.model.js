@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
         allowNull: false,
+        primaryKey: true,
       },
       eventId: {
         type: DataTypes.INTEGER,
@@ -15,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
           key: 'id',
         },
         allowNull: false,
+        primaryKey: true,
       },
       quantityUsed: {
         type: DataTypes.INTEGER,

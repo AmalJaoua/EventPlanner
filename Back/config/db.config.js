@@ -1,14 +1,18 @@
+require('dotenv').config(); // Load .env variables
+
 module.exports = {
-    HOST: "localhost",
-    USER: "supcom", 
-    PASSWORD: "admin", 
-    DB: "events", 
+  development: {
+    username: process.env.DB_USERNAME || 'defaultUsername',
+    password: process.env.AIVEN_PASSWORD || null,
+    database: process.env.DB_NAME || 'defaultdb',
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 3306,
     dialect: "mysql",
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
     },
-  };
-  
+  },
+};
