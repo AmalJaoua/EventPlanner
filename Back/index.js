@@ -7,7 +7,7 @@ const userRoutes = require('./routes/user.routes');
 const eventRoutes = require('./routes/event.routes');
 const attendeesRoutes = require('./routes/attendees.routes');
 const OcsRoutes = require('./routes/ocs.routes');
-
+const ResourcesRoutes = require('./routes/resources.routes');
 const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON request bodies
@@ -19,7 +19,7 @@ app.use('/user', userRoutes);
 app.use('/events', eventRoutes);  // Corrected this line
 app.use('/attendees',attendeesRoutes);
 app.use('/ocs',OcsRoutes);
-
+app.use('/resources',ResourcesRoutes);
 // Test route
 app.get('/', (req, res) => {
   res.send('Server is running!');
