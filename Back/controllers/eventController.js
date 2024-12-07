@@ -82,7 +82,7 @@ exports.getMaterialsByEvent = async (req, res) => {
       include: {
         model: db.Event,
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: [] }, // Exclude the join table attributes
+        through: { attributes: ['status'] }, // Include the 'status' field from the join table
       },
     });
 
@@ -106,7 +106,7 @@ exports.getLocalsByEvent = async (req, res) => {
       include: {
         model: db.Event,
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: [] }, // Exclude the join table attributes
+        through: { attributes: ['status'] }, // Include the 'status' field from the join table
       },
     });
 
