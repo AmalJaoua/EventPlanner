@@ -1,17 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/eventController');
-const { authenticate } = require('../middleware/authMiddleware'); // Import auth middleware
+const { authenticate } = require('../middleware/authMiddleware');
 
-// Define your routes and use the middleware for protected routes
-router.post('/', authenticate, eventController.createEvent); // Protect create event route
-router.get('/', eventController.getAllEvents); // Public route
-router.get('/:eventId', eventController.getEventById); // Public route
-//router.put('/:eventId', authenticate, eventController.updateEvent); // Protect update event route
-router.delete('/:eventId', authenticate, eventController.deleteEvent); // Protect delete event route
-// Route to get locals of an event
-router.get('/:eventId/locals', eventController.getLocalsOfEvent);
+// Route to create a new event (protected)
+router.post('/', authenticate, eventController.createEvent);
 
-// Route to get materials of an event
-router.get('/:eventId/materials', eventController.getMaterialsOfEvent);
+// Route to get all events (public)
+router.get('/', eventController.getAllEvents);
+
+// Route to get details of a specific event by ID (public)
+router.get('/:eventId', eventController.getEventById);
+
+// Route to delete a specific event by ID (protected)
+router.delete('/:eventId', authenticate, eventController.deleteEvent);
+
+// Route to get locals of a specific event by ID (public)
+router.get('/:eventId/locals', eventController.getLocalsByEvent);
+
+// Route to get materials of a specific event by ID (public)
+router.get('/:eventId/materials', eventController.getMaterialsByEvent);
+
 module.exports = router;

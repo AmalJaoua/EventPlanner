@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ocsController = require('../controllers/ocsController');
-const { authenticate } = require('../middleware/auth');
+const { authenticate } = require('../middleware/authMiddleware');
 
 // Route to create a new OC for a specific event
 router.post('/:eventId', authenticate, ocsController.createOC);
