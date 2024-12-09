@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: 'Pending', // Default status
+        defaultValue: 0, // Default status
       },
     });
   

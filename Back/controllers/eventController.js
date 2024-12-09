@@ -78,11 +78,12 @@ exports.getMaterialsByEvent = async (req, res) => {
 
   try {
     // Fetch materials associated with the event
-    const materials = await db.Material.findAll({
+    const materials = await Material.findAll({
       include: {
-        model: db.Event,
+        model: Event,
+        as: 'events',
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: ['status'] }, // Include the 'status' field from the join table
+        through: { attributes: [] }, // Include the 'status' field from the join table
       },
     });
 
@@ -102,11 +103,12 @@ exports.getLocalsByEvent = async (req, res) => {
 
   try {
     // Fetch locals associated with the event
-    const locals = await db.Local.findAll({
+    const locals = await Local.findAll({
       include: {
-        model: db.Event,
+        model: Event,
+        as: 'events',
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: ['status'] }, // Include the 'status' field from the join table
+        through: { attributes: [] }, // Include the 'status' field from the join table
       },
     });
 

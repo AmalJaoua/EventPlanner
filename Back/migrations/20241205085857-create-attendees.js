@@ -20,7 +20,7 @@ module.exports = {
       status: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: 'Pending',
+        defaultValue: 0,
       },
       eventId: {
         type: Sequelize.INTEGER,

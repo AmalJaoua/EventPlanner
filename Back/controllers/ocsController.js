@@ -1,9 +1,10 @@
 const db = require('../models'); // Import Sequelize models
+const bcrypt = require('bcrypt');
 
 // Create an OC (user with type = 3) and associate with an event
 exports.createOC = async (req, res) => {
   const { eventId } = req.params; // Extract eventId from route parameters
-  const { name, email, password } = req.body;
+  const { name, email, password,phoneNumber } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: "Name, email, and password are required." });
@@ -15,18 +16,24 @@ exports.createOC = async (req, res) => {
     if (!event) {
       return res.status(404).json({ message: "Event not found." });
     }
-
+    const hashedPassword = await bcrypt.hash(password, 10);
     // Create the user with type = 3 (OC)
     const newOC = await db.User.create({
       name,
       email,
-      password, // Ensure password hashing in your model/hooks
+      password: hashedPassword,
+      phoneNumber,
       type: 3,
     });
+    
+    console.log("Created OC: ", newOC);  // Log the created OC object to check the id
+    
+    // Check if the id is set correctly
+  
 
     // Associate the OC with the event in UsersXEvents
     await db.UsersXEvents.create({
-      userId: newOC.id,
+      userId: newOC.userId,
       eventId,
     });
 
