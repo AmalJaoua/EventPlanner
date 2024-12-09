@@ -22,16 +22,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',  // This refers to the 'Users' table
-          key: 'userId',  // Foreign key to the Users table
-        },
-        onUpdate: 'CASCADE',  // If the userId is updated, update the foreign key in Events
-        onDelete: 'CASCADE',  // If a user is deleted, delete all their events
-      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

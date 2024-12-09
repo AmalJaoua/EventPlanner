@@ -1,13 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
     const UsersXEvents = sequelize.define('UsersXEvents', {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
+
       userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'Users',
           key: 'id',
@@ -16,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       eventId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'Events',
           key: 'id',
