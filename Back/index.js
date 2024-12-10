@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config(); // Load environment variables from .env
+const cors = require('cors'); // Import the CORS package
 const app = express();
 const { sequelize } = require('./models'); // Import sequelize instance
 const authRoutes = require('./routes/auth.routes');
@@ -13,13 +14,20 @@ const PORT = process.env.PORT || 3000;
 // Middleware to parse JSON request bodies
 app.use(express.json());
 
+// Enable CORS for all routes
+app.use(cors()); // This will allow all origins by default
+
+// Or, if you want to restrict to specific origins, you can configure it like this:
+// app.use(cors({ origin: 'http://yourfrontend.com' }));
+
 // Routes
 app.use('/auth', authRoutes); // Authentication routes (signup/login)
 app.use('/user', userRoutes);
 app.use('/events', eventRoutes);  // Corrected this line
-app.use('/attendees',attendeesRoutes);
-app.use('/ocs',OcsRoutes);
-app.use('/resources',ResourcesRoutes);
+app.use('/attendees', attendeesRoutes);
+app.use('/ocs', OcsRoutes);
+app.use('/resources', ResourcesRoutes);
+
 // Test route
 app.get('/', (req, res) => {
   res.send('Server is running!');

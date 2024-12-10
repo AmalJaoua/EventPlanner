@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom"; // Import useNavigate instead of useHistory
 import "./Login.css";
 
 const Login = () => {
@@ -7,6 +7,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,7 +18,7 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
@@ -24,15 +26,29 @@ const Login = () => {
       return;
     }
 
-    // To be replaced with real authentication logic when backend is developped 
-    console.log("Login Data:", formData);
-    alert("Login successful!");
+    try {
+      const response = await fetch("http://localhost:3000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // Clear the form
-    setFormData({
-      email: "",
-      password: "",
-    });
+      const data = await response.json();
+
+      if (response.ok) {
+        // Assuming you get a token in the response
+        localStorage.setItem("token", data.token);
+        alert("Login successful!");
+        navigate("/yourevents"); // Redirect to dashboard or another page after successful login
+      } else {
+        alert(data.error || "Login failed");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred. Please try again.");
+    }
   };
 
   return (

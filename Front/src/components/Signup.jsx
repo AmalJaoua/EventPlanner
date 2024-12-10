@@ -4,7 +4,6 @@ import './Signup.css';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     phone: '',
     password: '',
@@ -19,7 +18,6 @@ const Signup = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.phone) newErrors.phone = 'Phone number is required';
     if (!formData.password) newErrors.password = 'Password is required';
@@ -28,11 +26,32 @@ const Signup = () => {
     return Object.keys(newErrors).length === 0; // Returns true if no errors
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      alert('Signup Successful');
-      navigate('/login');
+      try {
+        const response = await fetch('http://localhost:3000/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            phoneNumber: formData.phone,
+            password: formData.password,
+          }),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          alert('Signup Successful');
+          navigate('/login');
+        } else {
+          alert(result.error || 'Error occurred during signup');
+        }
+      } catch (error) {
+        alert('Network error, please try again');
+      }
     }
   };
 
@@ -40,18 +59,6 @@ const Signup = () => {
     <div className="signupContainer">
       <h2>Signup</h2>
       <form className="signupForm" onSubmit={handleSubmit}>
-        <div className="formGroup">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className={errors.name ? 'error' : ''}
-          />
-          {errors.name && <span className="errorMessage">{errors.name}</span>}
-        </div>
         <div className="formGroup">
           <label htmlFor="email">Email</label>
           <input
