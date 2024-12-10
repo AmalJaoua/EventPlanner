@@ -10,7 +10,7 @@ router.post('/', authenticate, eventController.createEvent);
 router.get('/', eventController.getAllEvents);
 
 // Route to get details of a specific event by ID (public)
-router.get('/:eventId', eventController.getEventById);
+router.get('/:eventId',authenticate, eventController.getEventById);
 
 // Route to delete a specific event by ID (protected)
 router.delete('/:eventId', authenticate, eventController.deleteEvent);

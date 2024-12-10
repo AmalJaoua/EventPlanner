@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { Link,useNavigate } from "react-router-dom"; // Import useNavigate instead of useHistory
+import React, { useState, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom"; // Added Link for signup navigation
+import { TokenContext } from "./Tokencontext"; // Import TokenContext
 import "./Login.css";
 
 const Login = () => {
@@ -8,7 +9,8 @@ const Login = () => {
     password: "",
   });
 
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
+  const { updateToken } = useContext(TokenContext); // Access the updateToken function from TokenContext
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,10 +40,10 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Assuming you get a token in the response
-        localStorage.setItem("token", data.token);
+        // Update the token in context
+        updateToken(data.token);
         alert("Login successful!");
-        navigate("/yourevents"); // Redirect to dashboard or another page after successful login
+        navigate("/yourevents"); // Redirect to the dashboard or another page
       } else {
         alert(data.error || "Login failed");
       }

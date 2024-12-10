@@ -1,4 +1,5 @@
-const { Event, Local, Material } = require('../models');
+const jwt = require('jsonwebtoken');
+const { Event, Local, Material,User,UsersXEvents } = require('../models');
 // Create a new event
 exports.createEvent = async (req, res) => {
   try {
@@ -34,10 +35,30 @@ exports.getAllEvents = async (req, res) => {
 // Get event by ID
 exports.getEventById = async (req, res) => {
   try {
+    const userId = req.user.id; // User ID is already set by the authenticate middleware
+
+    // Fetch the user to check if they have the correct type (admin or authorized user)
+    const user = await User.findByPk(userId);
+    if (!user || user.type !== 1) {
+      return res.status(403).json({ error: 'Forbidden: User does not have access to this event' });
+    }
+
+    // Fetch the event
     const event = await Event.findByPk(req.params.eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
+
+    // Check if the user is associated with the event in usersXevents
+    const userEvent = await UsersXEvents.findOne({
+      where: { userId, eventId: req.params.eventId },
+    });
+
+    if (!userEvent) {
+      return res.status(403).json({ error: 'Forbidden: Event does not belong to the user' });
+    }
+
+    // Return the event if all checks pass
     res.status(200).json(event);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching event', details: error.message });
