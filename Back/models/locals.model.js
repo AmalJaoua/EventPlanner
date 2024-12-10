@@ -14,10 +14,10 @@ module.exports = (sequelize, DataTypes) => {
   // Define the relationship with the Event model
   Local.associate = (models) => {
     Local.belongsToMany(models.Event, {
-      through: 'LocalXEvent',  // Junction table model name
+      through: models.LocalXEvent,  // Junction table model name
       foreignKey: 'localId',  // Foreign key in the junction table
       otherKey: 'eventId',    // Other foreign key in the junction table
-      as: 'events',           // Alias for accessing related events
+      // as: 'events',           // Alias for accessing related events
     });
   };
 

@@ -1,32 +1,29 @@
 const { Event, LocalXEvent, MaterialXEvent, Local, Material } = require('../models');
-const { Op } = require('sequelize');
+const { Op, where, fn, col } = require('sequelize');
 
 const getAvailableLocalsAndMaterials = async (req, res) => {
   try {
     const { startDate, endDate } = req.query; // Expect startDate and endDate in YYYY-MM-DD format
-    const rangeStart = new Date(startDate);
-    const rangeEnd = new Date(endDate);
-
     // Step 1: Get all locals that are not booked during the given date range
-    const bookedLocals = await LocalXEvent.findAll({
+    console.log("date",req.body)
+    // const test = await Local.findAll();
+    // console.log(test)
+    const bookedLocals = await Local.findAll({
       include: [
         {
           model: Event,
+          as:'Events',
           where: {
             [Op.or]: [
-              { dateStart: { [Op.between]: [rangeStart, rangeEnd] } },
-              { dateEnd: { [Op.between]: [rangeStart, rangeEnd] } },
-              {
-                dateStart: { [Op.lte]: rangeStart },
-                dateEnd: { [Op.gte]: rangeEnd },
-              },
+              { dateStart: { [Op.between]: [startDate, endDate] } },
+              { dateEnd: { [Op.between]: [startDate, endDate] } },
+              { dateStart: { [Op.lte]: startDate },dateEnd: { [Op.gte]: endDate },},
             ],
           },
           attributes: ['id'], // No need to fetch full Event details
         },
       ],
     });
-
     const bookedLocalIds = bookedLocals.map((localEvent) => localEvent.localId);
 
     const availableLocals = await Local.findAll({
@@ -35,46 +32,71 @@ const getAvailableLocalsAndMaterials = async (req, res) => {
       },
     });
 
-    // Step 2: Get all materials whose usage is less than their total quantity during the given date range
-    const usedMaterials = await MaterialXEvent.findAll({
-      include: [
-        {
-          model: Event,
-          where: {
-            [Op.or]: [
-              { dateStart: { [Op.between]: [rangeStart, rangeEnd] } },
-              { dateEnd: { [Op.between]: [rangeStart, rangeEnd] } },
-              {
-                dateStart: { [Op.lte]: rangeStart },
-                dateEnd: { [Op.gte]: rangeEnd },
-              },
-            ],
-          },
-        },
-      ],
-      attributes: ['materialId', [sequelize.fn('SUM', sequelize.col('quantityUsed')), 'totalUsed']],
-      group: ['materialId'],
-    });
-
-    const overUsedMaterialIds = [];
-    for (const material of usedMaterials) {
-      const totalUsed = parseInt(material.get('totalUsed'), 10);
-      const materialDetails = await Material.findByPk(material.materialId);
-      if (totalUsed >= materialDetails.quantity) {
-        overUsedMaterialIds.push(material.materialId);
-      }
-    }
-
-    const availableMaterials = await Material.findAll({
-      where: {
-        id: { [Op.notIn]: overUsedMaterialIds },
+    
+// Find all materials that are being used during the given date range
+const bookedMaterials = await Material.findAll({
+  include: [
+    {
+      model: Event,
+      as: 'Events', // This should match the alias used in your associations
+      through: {
+        model: MaterialXEvent,
+        attributes: ['materialId', 'quantityUsed'], // Fetch the quantityUsed from the junction table
       },
-    });
+      where: {
+        [Op.or]: [
+          { dateStart: { [Op.between]: [startDate, endDate] } },
+          { dateEnd: { [Op.between]: [startDate, endDate] } },
+          { dateStart: { [Op.lte]: startDate }, dateEnd: { [Op.gte]: endDate } },
+        ],
+      },
+      attributes: ['id'], // Only need Event ID, no need to fetch full event details
+    },
+  ],
+});
+
+// Get the material IDs and their quantities used in the events
+const materialUsage = bookedMaterials.map((material) => {
+  return material.Events.map((event) => {
+    return {
+      materialId: material.id,
+      quantityUsed: event.MaterialXEvent.quantityUsed,
+    };
+  });
+}).flat();
+
+// Aggregate the quantities used per material
+const materialUsageAggregated = materialUsage.reduce((acc, { materialId, quantityUsed }) => {
+  if (acc[materialId]) {
+    acc[materialId] += quantityUsed;
+  } else {
+    acc[materialId] = quantityUsed;
+  }
+  return acc;
+}, {});
+
+// Now find all materials that have enough quantity remaining
+const availableMaterials = await Material.findAll({
+  where: {
+    quantity: {
+      [Op.gte]: 1, // Ensure that only materials with at least 1 quantity are available
+    },
+  },
+});
+
+// Check materials with usage but still have available quantity
+const materialsWithSufficientQuantity = availableMaterials.filter(material => {
+  const totalUsed = materialUsageAggregated[material.id] || 0;
+  // Check if the material still has remaining quantity
+  return material.quantity - totalUsed > 0;  // This ensures the material still has available quantity
+});
+
+
 
     // Step 3: Send response
     res.status(200).json({
       availableLocals,
-      availableMaterials,
+      materialsWithSufficientQuantity,
     });
   } catch (error) {
     console.error('Error fetching availability:', error);

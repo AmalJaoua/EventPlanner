@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         through: models.MaterialXEvent, // Junction table model
         foreignKey: 'materialId',       // Foreign key in the junction table
         otherKey: 'eventId',            // Other foreign key in the junction table
-        as: 'events',                   // Alias for accessing related events
+        // as: 'events',                   // Alias for accessing related events
       });
     };
   

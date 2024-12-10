@@ -10,6 +10,7 @@ module.exports = {
         },
         allowNull: false,
         primaryKey: true,
+        onDelete: 'CASCADE',
       },
       
       eventId: {
@@ -20,6 +21,7 @@ module.exports = {
         },
         allowNull: false,
         primaryKey: true,
+        onDelete: 'CASCADE',
       },
 
       quantityUsed: {
@@ -33,7 +35,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.BOOLEAN,
-        allowNull: flase, // 
+        allowNull: false, // 
       },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,

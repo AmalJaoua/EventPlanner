@@ -10,6 +10,7 @@ module.exports = {
         },
         allowNull: false,
         primaryKey: true,
+        onDelete: 'CASCADE',
       },
       eventId: {
         type: Sequelize.INTEGER,
@@ -19,6 +20,7 @@ module.exports = {
         },
         allowNull: false,
         primaryKey: true,
+        onDelete: 'CASCADE',
       },
       message: {
         type: Sequelize.TEXT, // Use Sequelize.TEXT if longer messages are needed
