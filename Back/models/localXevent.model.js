@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
       },
       primaryKey: true,
     },
+    message: {
+      type: DataTypes.TEXT, 
+      allowNull: true, // Nullable
+    },
+    status: {
+      type: DataTypes.BOOLEAN, // Boolean field
+      allowNull: false, // Nullable
+    },
   }, { tableName: 'LocalXEvent' }); // Explicit table name for junction table
 
   return LocalXEvent;

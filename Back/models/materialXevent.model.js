@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0,
       },
+      message: {
+        type: DataTypes.TEXT, 
+        allowNull: true, // Nullable
+      },
+      status: {
+        type: DataTypes.BOOLEAN, // Boolean field
+        allowNull: false, // Nullable
+      },
     });
   
     return MaterialXEvent;

@@ -27,6 +27,14 @@ module.exports = {
         allowNull: false,
         defaultValue: 0,
       },
+      message: {
+        type: Sequelize.TEXT, // Use Sequelize.TEXT if longer messages are needed
+        allowNull: true, // Nullable
+      },
+      status: {
+        type: Sequelize.BOOLEAN,
+        allowNull: flase, // 
+      },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
     });
