@@ -102,13 +102,28 @@ exports.getMaterialsByEvent = async (req, res) => {
     const materials = await Material.findAll({
       include: {
         model: Event,
-        as: 'events',
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: [] }, // Include the 'status' field from the join table
+        through: { attributes: ['status', 'quantityUsed'] }, // Include the 'status' field from the join table
       },
     });
 
-    res.status(200).json({ message: "Materials retrieved successfully.", data: materials });
+    // Process the data to match the required format
+    const processedMaterials = materials.map(material => {
+      const materialData = material.toJSON();
+      const eventData = material.Events[0] ? material.Events[0].MaterialXEvent : {}; // Assuming there's always at least one event
+      return {
+        id: materialData.id,
+        name: materialData.name,
+        quantity: materialData.quantity,
+        status: eventData.status || false,
+        quantityUsed: eventData.quantityUsed || 0,
+      };
+    });
+
+    res.status(200).json({
+      message: "Materials retrieved successfully.",
+      data: processedMaterials,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving materials.", error: error.message });
   }
@@ -127,17 +142,31 @@ exports.getLocalsByEvent = async (req, res) => {
     const locals = await Local.findAll({
       include: {
         model: Event,
-        as: 'events',
         where: { id: eventId }, // Filter by the specific event ID
-        through: { attributes: [] }, // Include the 'status' field from the join table
+        through: { attributes: ['status'] }, // Include the 'status' field from the join table
       },
     });
 
-    res.status(200).json({ message: "Locals retrieved successfully.", data: locals });
+    // Process the data to match the required format
+    const processedLocals = locals.map(local => {
+      const localData = local.toJSON();
+      const eventData = local.Events[0] ? local.Events[0].LocalXEvent : {}; // Assuming there's always at least one event
+      return {
+        id: localData.id,
+        name: localData.name,
+        status: eventData.status || false, // Default to false if no status
+      };
+    });
+
+    res.status(200).json({
+      message: "Locals retrieved successfully.",
+      data: processedLocals,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving locals.", error: error.message });
   }
 };
+
 // Delete an event
 exports.deleteEvent = async (req, res) => {
   try {

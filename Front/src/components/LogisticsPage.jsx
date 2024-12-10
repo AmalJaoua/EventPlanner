@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './LogisticsPage.css';
 
-const LogisticsPage = () => {
-  const [activeTab, setActiveTab] = useState('locals'); // Default tab is 'locals'
+const LogisticsPage = ({ eventId }) => {
+  const [activeTab, setActiveTab] = useState('locals');
+  const [locals, setLocals] = useState([]);
+  const [materials, setMaterials] = useState([]);
+  const [error, setError] = useState(null); // To handle errors
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -13,16 +16,34 @@ const LogisticsPage = () => {
     alert('Your request has been sent!'); // Displays an alert
   };
 
-  // Mock data for the list
-  const localReservations = [
-    { name: 'A215', date: '2024-12-01', status: 'Approved' },
-    { name: 'A214', date: '2024-12-02', status: 'Pending' },
-  ];
+  useEffect(() => {
+    // Fetch locals and materials when the eventId is available
+    const fetchData = async () => {
+      try {
+        // Fetch locals
+        const localsResponse = await fetch(`http://localhost:3000/events/${eventId}/locals`);
+        if (!localsResponse.ok) {
+          throw new Error('Failed to fetch locals');
+        }
+        const localsData = await localsResponse.json();
+        setLocals(localsData.data);
 
-  const materialReservations = [
-    { name: 'Projector', date: '2024-12-01', status: 'Approved' },
-    { name: 'Light', date: '2024-12-03', status: 'Pending' },
-  ];
+        // Fetch materials
+        const materialsResponse = await fetch(`http://localhost:3000/events/${eventId}/materials`);
+        if (!materialsResponse.ok) {
+          throw new Error('Failed to fetch materials');
+        }
+        const materialsData = await materialsResponse.json();
+        setMaterials(materialsData.data);
+      } catch (error) {
+        setError('Error fetching data: ' + error.message);
+      }
+    };
+
+    if (eventId) {
+      fetchData();
+    }
+  }, [eventId]); // Run this effect when the eventId changes
 
   return (
     <div className="logisticsPage">
@@ -43,15 +64,19 @@ const LogisticsPage = () => {
         </button>
       </div>
       <div className="contentArea">
+        {error && <p className="error">{error}</p>}
+
         {activeTab === 'locals' && (
           <>
             <form className="logisticsForm" onSubmit={handleSubmit}>
               <label htmlFor="localSelect">Select Local:</label>
               <select id="localSelect" name="local" required>
                 <option value="">Select...</option>
-                <option value="A215">A215</option>
-                <option value="A214">A214</option>
-                <option value="B215">B215</option>
+                {locals.map((local, index) => (
+                  <option key={index} value={local.name}>
+                    {local.name}
+                  </option>
+                ))}
               </select>
               <label htmlFor="localMessage">Message:</label>
               <textarea
@@ -67,31 +92,36 @@ const LogisticsPage = () => {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Date</th>
+                  <th>Quantity Used</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {localReservations.map((local, index) => (
+                {locals.map((local, index) => (
                   <tr key={index}>
                     <td>{local.name}</td>
-                    <td>{local.date}</td>
-                    <td>{local.status}</td>
+                    <td>{local.quantityUsed}</td>
+                    <td className={local.status ? 'approved' : 'notApproved'}>
+                      {local.status ? 'Approved' : 'Not Approved'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </>
         )}
+
         {activeTab === 'materials' && (
           <>
             <form className="logisticsForm" onSubmit={handleSubmit}>
               <label htmlFor="materialSelect">Select Material:</label>
               <select id="materialSelect" name="material" required>
                 <option value="">Select...</option>
-                <option value="projector">Projector</option>
-                <option value="light">Light</option>
-                <option value="tele">Tele</option>
+                {materials.map((material, index) => (
+                  <option key={index} value={material.name}>
+                    {material.name}
+                  </option>
+                ))}
               </select>
               <label htmlFor="materialMessage">Message:</label>
               <textarea
@@ -107,16 +137,20 @@ const LogisticsPage = () => {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Date</th>
+                  <th>Quantity</th>
+                  <th>Quantity Used</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {materialReservations.map((material, index) => (
+                {materials.map((material, index) => (
                   <tr key={index}>
                     <td>{material.name}</td>
-                    <td>{material.date}</td>
-                    <td>{material.status}</td>
+                    <td>{material.quantity}</td>
+                    <td>{material.quantityUsed}</td>
+                    <td className={material.status ? 'approved' : 'notApproved'}>
+                      {material.status ? 'Approved' : 'Not Approved'}
+                    </td>
                   </tr>
                 ))}
               </tbody>

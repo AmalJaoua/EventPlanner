@@ -112,4 +112,13 @@
   .reservationTable tr:nth-child(even) {
     background-color: #f9f9f9;
   }
+  .approved {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .notApproved {
+    color: red;
+    font-weight: bold;
+  }
   

@@ -49,7 +49,7 @@ const ManageEvent = () => {
   const renderPage = () => {
     switch (activePage) {
       case "logistics":
-        return <LogisticsPage />;
+        return <LogisticsPage eventId={eventId}/>;
       case "attendees":
         return <AttendeesPage />;
       case "ocs":
