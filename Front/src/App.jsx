@@ -8,6 +8,11 @@ import Landing from './components/Landing';
 import YourEvents from './components/YourEvents';
 import AdminDashboard from './components/AdminDashboard';
 import { TokenProvider } from './components/Tokencontext';
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1d3627d (Minor change in App.jsx)
 function App() {
   return (
     <TokenProvider>
