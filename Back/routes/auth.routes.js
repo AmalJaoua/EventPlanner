@@ -1,15 +1,12 @@
-// /routes/authRoutes.js
 const express = require('express');
-const { signup, login, checkAdmin } = require('../controllers/authController');
-const { authenticate, isAdmin } = require('../middleware/authMiddleware');
+const { signup, login } = require('../controllers/authController');
 
 const router = express.Router();
 
-// Public routes
+// Signup route
 router.post('/signup', signup);
-router.post('/login', login);
 
-// Protected route: check if the user is admin
-router.get('/check-admin', authenticate, isAdmin, checkAdmin);
+// Login route
+router.post('/login', login);
 
 module.exports = router;
