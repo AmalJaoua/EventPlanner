@@ -92,7 +92,6 @@ const LogisticsPage = ({ eventId }) => {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Quantity Used</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -100,7 +99,6 @@ const LogisticsPage = ({ eventId }) => {
                 {locals.map((local, index) => (
                   <tr key={index}>
                     <td>{local.name}</td>
-                    <td>{local.quantityUsed}</td>
                     <td className={local.status ? 'approved' : 'notApproved'}>
                       {local.status ? 'Approved' : 'Not Approved'}
                     </td>
@@ -137,7 +135,7 @@ const LogisticsPage = ({ eventId }) => {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Quantity</th>
+                  
                   <th>Quantity Used</th>
                   <th>Status</th>
                 </tr>
@@ -146,7 +144,7 @@ const LogisticsPage = ({ eventId }) => {
                 {materials.map((material, index) => (
                   <tr key={index}>
                     <td>{material.name}</td>
-                    <td>{material.quantity}</td>
+                    
                     <td>{material.quantityUsed}</td>
                     <td className={material.status ? 'approved' : 'notApproved'}>
                       {material.status ? 'Approved' : 'Not Approved'}
