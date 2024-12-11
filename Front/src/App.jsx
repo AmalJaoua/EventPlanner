@@ -6,7 +6,12 @@ import Login from './components/Login';
 import ManageEvent from './components/ManageEvent';  
 import Landing from './components/Landing';
 import YourEvents from './components/YourEvents';
+<<<<<<< HEAD
 import { TokenProvider } from './components/Tokencontext';
+=======
+import AdminDashboard from './components/AdminDashboard';
+
+>>>>>>> 8d7061d (Creation of  Admin Pages)
 function App() {
   return (
     <TokenProvider>
@@ -17,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/event/:eventId" element={<ManageEvent />} />
         <Route path="/yourevents" element={<YourEvents />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
     </TokenProvider>

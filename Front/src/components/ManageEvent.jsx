@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
-import Sidebar from "./Sidebar";
+import SidebarEvent from "./SidebarEvent";
 import LogisticsPage from "./LogisticsPage";
 import AttendeesPage from "./AttendeesPage";
 import OcsPage from "./OcsPage";
@@ -71,7 +71,7 @@ const ManageEvent = () => {
 
   return (
     <div className="manageEvent">
-      <Sidebar event={event} />
+      <SidebarEvent event={event} />
       <div className="mainContent">
         <nav>
           <button onClick={() => setActivePage("logistics")}>Logistics</button>

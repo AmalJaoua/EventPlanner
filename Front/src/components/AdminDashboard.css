@@ -1,0 +1,27 @@
+/* General container for the entire page */
+.adminPage {
+    display: flex; /* Enables the layout with sidebar and main content */
+    width: 100%; /* Ensures the entire width of the viewport is used */
+    height: 100vh; /* Full height of the viewport */
+    overflow: hidden; /* Prevents horizontal scrolling */
+  }
+  
+  /* Main content area */
+  .eventsPageAdmin {
+    width: 75%; /* Takes up 75% of the screen (remaining after sidebar) */
+    padding: 20px; /* Add spacing inside the content */
+    background-color: #FBE9D0; /* Optional background */
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+  }
+  .rejectBtn
+  .approveBtn{
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  
+
+  
+  

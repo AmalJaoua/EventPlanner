@@ -11,14 +11,13 @@
 
 .sidebar h2 {
   font-size: 2em;
-  margin-bottom: 20px;
-  color: #1f2937;
+  color: #244855;
   text-align: center;
   align-self: stretch;
 }
 
 .details {
-  flex-grow: 1;
+  flex-grow: 0.5;
   display: flex;
   flex-direction: column;
   justify-content: space-around; 
@@ -36,4 +35,19 @@
 
 .sidebar strong {
   color: #000;
+}
+.titleSideBar{
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.backButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 10px;
+}
+
+.backButton:hover {
+  transform: scale(1.1);
 }
