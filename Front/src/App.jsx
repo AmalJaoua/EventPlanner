@@ -6,12 +6,8 @@ import Login from './components/Login';
 import ManageEvent from './components/ManageEvent';  
 import Landing from './components/Landing';
 import YourEvents from './components/YourEvents';
-<<<<<<< HEAD
-import { TokenProvider } from './components/Tokencontext';
-=======
 import AdminDashboard from './components/AdminDashboard';
-
->>>>>>> 8d7061d (Creation of  Admin Pages)
+import { TokenProvider } from './components/Tokencontext';
 function App() {
   return (
     <TokenProvider>

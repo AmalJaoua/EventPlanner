@@ -23,23 +23,37 @@ exports.createEvent = async (req, res) => {
 };
 
 // Get all events
+// Get all events by user
 exports.getAllEventsByUser = async (req, res) => {
   try {
     const userId = req.user.id; // User ID from middleware
 
     // Fetch the user to validate their access
     const user = await User.findByPk(userId);
-    if (!user || user.type !== 1) {
-      return res.status(403).json({ error: 'Forbidden: User does not have access to events' });
+    if (!user) {
+      return res.status(403).json({ error: 'Forbidden: User not found' });
     }
 
-    // Fetch all events associated with the user via UsersXEvents
+    // If the user type is 0 (admin or special user), return all events
+    if (user.type === 0) {
+      const events = await Event.findAll({
+        attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
+      });
+
+      if (!events.length) {
+        return res.status(404).json({ error: 'No events found' });
+      }
+
+      return res.status(200).json(events);
+    }
+
+    // If the user type is not 0, fetch events related to this user
     const events = await Event.findAll({
       include: [
         {
           model: User,
           where: { userId },
-          through: { model: UsersXEvents,attributes: [] }, // Prevent attributes from UsersXEvents
+          through: { model: UsersXEvents, attributes: [] }, // Prevent attributes from UsersXEvents
           attributes: [], // Exclude all User fields
         },
       ],
@@ -56,6 +70,7 @@ exports.getAllEventsByUser = async (req, res) => {
     res.status(500).json({ error: 'Error fetching user events', details: error.message });
   }
 };
+
 // Get event by ID
 exports.getEventById = async (req, res) => {
   try {
@@ -63,11 +78,21 @@ exports.getEventById = async (req, res) => {
 
     // Fetch the user to check if they have the correct type (admin or authorized user)
     const user = await User.findByPk(userId);
-    if (!user || user.type !== 1) {
-      return res.status(403).json({ error: 'Forbidden: User does not have access to this event' });
+    if (!user) {
+      return res.status(403).json({ error: 'Forbidden: User not found' });
     }
 
-    // Fetch the event
+    // If the user type is 0 (admin or special user), return the event without checking ownership
+    if (user.type === 0) {
+      const event = await Event.findByPk(req.params.eventId);
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+
+      return res.status(200).json(event);
+    }
+
+    // If the user type is not 0, fetch the event and check ownership
     const event = await Event.findByPk(req.params.eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
@@ -85,10 +110,10 @@ exports.getEventById = async (req, res) => {
     // Return the event if all checks pass
     res.status(200).json(event);
   } catch (error) {
+    console.error('Error fetching event:', error);
     res.status(500).json({ error: 'Error fetching event', details: error.message });
   }
 };
-
 // // Update an event
 // exports.updateEvent = async (req, res) => {
 //   try {
