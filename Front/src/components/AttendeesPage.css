@@ -94,6 +94,7 @@
   
   /* Specific for Status header */
   .statusHeader {
-    justify-content: flex-end;
+    justify-content: flex-end !important;
   }
+  
   

@@ -23,15 +23,39 @@ exports.createEvent = async (req, res) => {
 };
 
 // Get all events
-exports.getAllEvents = async (req, res) => {
+exports.getAllEventsByUser = async (req, res) => {
   try {
-    const events = await Event.findAll();
+    const userId = req.user.id; // User ID from middleware
+
+    // Fetch the user to validate their access
+    const user = await User.findByPk(userId);
+    if (!user || user.type !== 1) {
+      return res.status(403).json({ error: 'Forbidden: User does not have access to events' });
+    }
+
+    // Fetch all events associated with the user via UsersXEvents
+    const events = await Event.findAll({
+      include: [
+        {
+          model: User,
+          where: { userId },
+          through: { model: UsersXEvents,attributes: [] }, // Prevent attributes from UsersXEvents
+          attributes: [], // Exclude all User fields
+        },
+      ],
+      attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
+    });
+
+    if (!events.length) {
+      return res.status(404).json({ error: 'No events found for the user' });
+    }
+
     res.status(200).json(events);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching events', details: error.message });
+    console.error('Error fetching user events:', error);
+    res.status(500).json({ error: 'Error fetching user events', details: error.message });
   }
 };
-
 // Get event by ID
 exports.getEventById = async (req, res) => {
   try {

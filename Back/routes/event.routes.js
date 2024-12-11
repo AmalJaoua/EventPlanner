@@ -6,8 +6,8 @@ const { authenticate } = require('../middleware/authMiddleware');
 // Route to create a new event (protected)
 router.post('/', authenticate, eventController.createEvent);
 
-// Route to get all events (public)
-router.get('/', eventController.getAllEvents);
+// Route to get all events (protected)
+router.get('/',authenticate, eventController.getAllEventsByUser);
 
 // Route to get details of a specific event by ID (public)
 router.get('/:eventId',authenticate, eventController.getEventById);
