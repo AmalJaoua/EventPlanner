@@ -1,4 +1,5 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 require('dotenv').config(); // Load environment variables from .env
 const cors = require('cors'); // Import the CORS package
 const app = express();
@@ -13,9 +14,14 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware to parse JSON request bodies
 app.use(express.json());
+// Middleware
 
+app.use(cookieParser()); // For parsing cookies
 // Enable CORS for all routes
-app.use(cors()); // This will allow all origins by default
+app.use(cors({
+  
+  credentials: true // Allow cookies to be sent with requests
+}));
 
 // Or, if you want to restrict to specific origins, you can configure it like this:
 // app.use(cors({ origin: 'http://yourfrontend.com' }));
