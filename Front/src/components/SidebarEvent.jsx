@@ -12,11 +12,10 @@ const SidebarEvent = ({ event }) => {
         </Link>
         <h2>Event Details</h2>
       </div>
-     
       <div className="details">
         <p><strong>Name:</strong> {event.name}</p>
-        <p><strong>Start Date:</strong> {event.startDate}</p>
-        <p><strong>End Date:</strong> {event.endDate}</p>
+        <p><strong>Start Date:</strong> {new Date(event.dateStart).toLocaleString()}</p>
+        <p><strong>End Date:</strong> {new Date(event.dateEnd).toLocaleString()}</p>
       </div>
     </div>
   );
