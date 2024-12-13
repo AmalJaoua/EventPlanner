@@ -4,43 +4,68 @@ import './YourEvents.css';
 import { Link } from 'react-router-dom';
 import Delete from './Delete';  
 import RequestEvent from './RequestEvent'; 
+import { useToken } from './Tokencontext'; // Make sure you have a Tokencontext
 
 const YourEvents = () => {
+  const { token } = useToken(); // Access token from Tokencontext
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);  
   const [showRequestEventModal, setShowRequestEventModal] = useState(false); 
-  const [eventToDelete, setEventToDelete] = useState(null);  
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const eventList = [
-        { id: 1, name: "WiEmpower 1.0", date: "2024-12-01" },
-        { id: 2, name: "AI Workshop", date: "2024-12-05" },
-        { id: 3, name: "Hackathon", date: "2024-12-10" },
-        { id: 5, name: "Past Event 1", date: "2024-11-25" },
-        { id: 6, name: "Past Event 2", date: "2024-11-20" },
-      ];
-      setEvents(eventList);
-    };
-
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:3000/events', {
+          method:'GET',
+          headers: { Authorization: `Bearer ${token}` }, 
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        setEvents(data.filter(event => event.status === 1)); 
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };    
     fetchEvents();
-  }, []);
-
-  const upcomingEvents = events.filter(event => new Date(event.date) > new Date());
-  const pastEvents = events.filter(event => new Date(event.date) <= new Date());
+  }, [token]); // Dependency array updated to include token
+  console.log("These are my events",events);
+  
+  const upcomingEvents = events.filter(event => new Date(event.dateStart) > new Date());
+  const pastEvents = events.filter(event => new Date(event.dateStart) <= new Date());
+  console.log("These are my upcoming events",upcomingEvents);
+  console.log("These are my past events",pastEvents);
 
   const handleDeleteClick = (eventId) => {
     setEventToDelete(eventId); 
     setShowModal(true);
   };
 
-  const handleDelete = () => {
-    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete)); 
-    setShowModal(false); 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/events/${eventToDelete}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete the event');
+      }
+      setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete));
+      setShowModal(false);
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
   };
 
   const handleModalClose = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   const handleRequestEventClick = () => {
@@ -51,73 +76,91 @@ const YourEvents = () => {
     setShowRequestEventModal(false);
   };
 
+  if (loading) {
+    return <p>Loading events...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   return (
     <div className="eventsPage">
-      <div className="headerSection">
-        <h2>Your Events</h2>
-        <button className="plusButton" onClick={handleRequestEventClick}>
-          <Plus size={30} color="#244855" />
-        </button>
-      </div>
-
-      <h3>Upcoming Events</h3>
-      <div className="eventListHeader">
-        <p className="headerItem">Name</p>
-        <p className="headerItem dateHeader">Date</p>
-        <p className="headerItem actionHeader">Action</p>
-      </div>
-      <ul className="eventList">
-        {upcomingEvents.map((event, index) => (
-          <li key={index} className="eventItem">
-            <p className="eventName">{event.name}</p>
-            <p className="eventDate">{event.date}</p>
-            <div className="eventActions">
-              <Link to={`/event/${event.id}`}>
-                <button className="editBtn">
-                  <Edit size={20} color="#4C8BFF" />
-                </button>
-              </Link>
-              <button className="deleteBtn" onClick={() => handleDeleteClick(event.id)}>
-                <Trash2 size={20} />
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      <h3>Past Events</h3>
-      <div className="eventListHeader">
-        <p className="headerItem">Name</p>
-        <p className="headerItem dateHeader">Date</p>
-        <p className="headerItem actionHeader">Action</p>
-      </div>
-      <ul className="eventList">
-        {pastEvents.map((event, index) => (
-          <li key={index} className="eventItem">
-            <p className="eventName">{event.name}</p>
-            <p className="eventDate">{event.date}</p>
-            <div className="eventActions">
-              <button className="viewDetailsBtn">
-                View Details
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
+      {events.length === 0 ? (
+        <div className="noEvents">
+           <h3 className='noEventsH3'>No events yet, create your event now!</h3>
+           <button className="plusButton" onClick={handleRequestEventClick}>
+              <Plus size={30} color="#244855" />
+            </button>
+         
+        </div>
+      ) : (
+        <>
+          <div className="headerSection">
+            <h2>Your Events</h2>
+            <button className="plusButton" onClick={handleRequestEventClick}>
+              <Plus size={30} color="#244855" />
+            </button>
+          </div>
+          <h3>Upcoming Events</h3>
+          <div className="eventListHeader">
+            <p className="headerItem">Name</p>
+            <p className="headerItem dateHeader">Date</p>
+            <p className="headerItem actionHeader">Action</p>
+          </div>
+          <ul className="eventList">
+            {upcomingEvents.map((event, index) => (
+              <li key={index} className="eventItem">
+                <p className="eventName">{event.name}</p>
+                <p className="eventDate">{new Date(event.dateStart).toISOString().split('T')[0]}</p>
+                <div className="eventActions">
+                  <Link to={`/event/${event.id}`}>
+                    <button className="editBtn">
+                      <Edit size={20} color="#4C8BFF" />
+                    </button>
+                  </Link>
+                  <button
+                    className="deleteBtn"
+                    onClick={() => handleDeleteClick(event.id)}
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+  
+          <h3>Past Events</h3>
+          <div className="eventListHeader">
+            <p className="headerItem">Name</p>
+            <p className="headerItem dateHeader">Date</p>
+            <p className="headerItem actionHeader">Action</p>
+          </div>
+          <ul className="eventList">
+            {pastEvents.map((event, index) => (
+              <li key={index} className="eventItem">
+                <p className="eventName">{event.name}</p>
+                <p className="eventDate">{new Date(event.dateStart).toISOString().split('T')[0]}</p>
+                <div className="eventActions">
+                  <button className="viewDetailsBtn">View Details</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+  
       {showModal && (
-        <Delete 
-          onClose={handleModalClose} 
+        <Delete
+          onClose={handleModalClose}
           onDelete={handleDelete}
-          eventId={eventToDelete} 
+          eventId={eventToDelete}
         />
       )}
-
-      {showRequestEventModal && (
-        <RequestEvent onClose={handleRequestEventClose} />
-      )}
+  
+      {showRequestEventModal && <RequestEvent onClose={handleRequestEventClose} />}
     </div>
-  );
+  );  
 };
 
 export default YourEvents;

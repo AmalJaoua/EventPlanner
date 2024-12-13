@@ -126,3 +126,13 @@
   h3 + .eventList {
     margin-top: 10px;
   }
+  .noEvents{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-top: 50px;
+
+  }
+.noEventsH3{
+  margin: 0px !important;
+}

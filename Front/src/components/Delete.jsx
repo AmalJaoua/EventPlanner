@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
-import './Delete.css'; // This will contain the styles
+import React, { useState, useContext } from 'react';
+import axios from 'axios'; 
+import { TokenContext } from './Tokencontext'; 
+import './Delete.css';
 
-const Delete = ({ onClose, onDelete }) => {
+const Delete = ({ onClose, eventId }) => { 
+  const { token } = useContext(TokenContext);
   const [reason, setReason] = useState('');
 
-  const handleDeleteClick = () => {
-    onDelete(reason);  // Pass the reason for deletion
-    onClose();  // Close the modal
+  const handleDeleteClick = async () => {
+    try {
+      await axios.delete(`http://localhost:3000/events/${eventId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      alert('Event deleted successfully!');
+      onClose(); 
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      alert('Failed to delete event. Please try again.');
+    }
   };
 
   return (
