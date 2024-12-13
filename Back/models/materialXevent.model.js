@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
     const MaterialXEvent = sequelize.define('MaterialXEvent', {
+      MxEid: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       materialId: {
         type: DataTypes.INTEGER,
         references: {

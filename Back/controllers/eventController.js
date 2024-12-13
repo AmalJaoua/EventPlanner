@@ -13,9 +13,12 @@ exports.createEvent = async (req, res) => {
       description,
       dateStart,
       dateEnd,
-      userId: user.id, // Attach user ID from token
     });
-
+    const userxevent = await UsersXEvents.create({
+      userId: user.id,
+      eventId: event.id
+    });
+  
     res.status(201).json({ message: 'Event created successfully', event });
   } catch (error) {
     res.status(500).json({ error: 'Error creating event', details: error.message });
@@ -40,9 +43,9 @@ exports.getAllEventsByUser = async (req, res) => {
         attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
       });
 
-      if (!events.length) {
-        return res.status(404).json({ error: 'No events found' });
-      }
+      if (events.length === 0) {
+        return res.status(200).json([]);
+      }      
 
       return res.status(200).json(events);
     }
@@ -57,12 +60,12 @@ exports.getAllEventsByUser = async (req, res) => {
           attributes: [], // Exclude all User fields
         },
       ],
-      attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
+      attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'status', 'createdAt', 'updatedAt'] 
     });
 
-    if (!events.length) {
-      return res.status(404).json({ error: 'No events found for the user' });
-    }
+    if (events.length === 0) {
+      return res.status(200).json([]);
+    }    
 
     res.status(200).json(events);
   } catch (error) {
@@ -219,19 +222,24 @@ exports.getLocalsByEvent = async (req, res) => {
 // Delete an event
 exports.deleteEvent = async (req, res) => {
   try {
-    // The user is already authenticated, and their info is in req.user
     const user = req.user;
+    const userEvent = await UsersXEvents.findOne({
+      where: {
+        userId: user.id,
+        eventId: req.params.eventId,
+      },
+    });
+
+    if (!userEvent) {
+      return res.status(404).json({ error: 'Event not found or you are not authorized to delete it' });
+    }
 
     const event = await Event.findByPk(req.params.eventId);
     if (!event) {
       return res.status(404).json({ error: 'Event not found' });
     }
-
-    if (event.userId !== user.id) {
-      return res.status(403).json({ error: 'You are not authorized to delete this event' });
-    }
-
     await event.destroy();
+
     res.status(200).json({ message: 'Event deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Error deleting event', details: error.message });

@@ -2,6 +2,11 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('MaterialXEvents', {
+      MxEid: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       materialId: {
         type: Sequelize.INTEGER,
         references: {
@@ -35,6 +40,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.BOOLEAN,
+        defaultValue: 0,
         allowNull: false, // 
       },
       createdAt: Sequelize.DATE,

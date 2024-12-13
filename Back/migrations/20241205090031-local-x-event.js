@@ -1,4 +1,7 @@
 'use strict';
+
+const { defaultValueSchemable } = require("sequelize/lib/utils");
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('LocalXEvents', {
@@ -28,6 +31,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.BOOLEAN,
+        defaultValue: 0,
         allowNull: false, // 
       },
       createdAt: Sequelize.DATE,
