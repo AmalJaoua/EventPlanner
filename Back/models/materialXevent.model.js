@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.BOOLEAN, // Boolean field
         allowNull: false, // Nullable
+        defaultValue:0,
       },
     });
   

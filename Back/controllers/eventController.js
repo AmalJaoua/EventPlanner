@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { Event, Local, Material,User,UsersXEvents } = require('../models');
+const { Event, Local, Material,User,UsersXEvents,LocalXEvent,MaterialXEvent } = require('../models');
 // Create a new event
 exports.createEvent = async (req, res) => {
   try {
@@ -237,3 +237,57 @@ exports.deleteEvent = async (req, res) => {
     res.status(500).json({ error: 'Error deleting event', details: error.message });
   }
 };
+exports.createMaterialXEvent = async (req, res) => {
+  try {
+    const { eventid, materialid } = req.params;
+    const { quantityUsed,message  } = req.body;
+
+    // Validate if event and material exist
+    const event = await Event.findByPk(eventid);
+    const material = await Material.findByPk(materialid);
+
+    if (!event || !material) {
+      return res.status(404).json({ message: 'Event or Material not found' });
+    }
+
+    // Create the MaterialXEvent
+    const materialXEvent = await MaterialXEvent.create({
+      eventId: eventid,
+      materialId: materialid,
+      quantityUsed,
+      message,
+    });
+
+    res.status(201).json({ message: 'MaterialXEvent created successfully', materialXEvent });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.createLocalXEvent = async (req, res) => {
+  try {
+    const { eventid, localid } = req.params;
+    const { message  } = req.body;
+    // Validate if event and local exist
+    const event = await Event.findByPk(eventid);
+    const local = await Local.findByPk(localid);
+
+    if (!event || !local) {
+      return res.status(404).json({ message: 'Event or Local not found' });
+    }
+
+    // Create the LocalXEvent
+    const localXEvent = await LocalXEvent.create({
+      eventId: eventid,
+      localId: localid,
+      message,
+    });
+
+    res.status(201).json({ message: 'LocalXEvent created successfully', localXEvent });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+

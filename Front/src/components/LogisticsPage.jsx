@@ -3,66 +3,111 @@ import './LogisticsPage.css';
 
 const LogisticsPage = ({ eventId, startDate, endDate }) => {
   const [activeTab, setActiveTab] = useState('locals');
-  const [availableLocals, setAvailableLocals] = useState([]); // Locals from /resources/available
-  const [availableMaterials, setAvailableMaterials] = useState([]); // Materials from /resources/available
-  const [reservedLocals, setReservedLocals] = useState([]); // Locals from /events/${eventId}/locals
-  const [reservedMaterials, setReservedMaterials] = useState([]); // Materials from /events/${eventId}/materials
-  const [error, setError] = useState(null); // To handle errors
+  const [availableLocals, setAvailableLocals] = useState([]);
+  const [availableMaterials, setAvailableMaterials] = useState([]);
+  const [reservedLocals, setReservedLocals] = useState([]);
+  const [reservedMaterials, setReservedMaterials] = useState([]);
+  const [error, setError] = useState(null);
 
-  // Fetch availability of locals and materials based on start and end date
   useEffect(() => {
     const fetchAvailability = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/resources/available?startDate=${startDate}&endDate=${endDate}`);
+        const response = await fetch(
+          `http://localhost:3000/resources/available?startDate=${startDate}&endDate=${endDate}`
+        );
         const data = await response.json();
-        console.log('Available Locals:', data.availableLocals); // Debugging line
-        console.log('Available Materials:', data.materialsWithSufficientQuantity); // Debugging line
-        setAvailableLocals(data.availableLocals); // Set available locals
-        setAvailableMaterials(data.materialsWithSufficientQuantity); // Set available materials
+        setAvailableLocals(data.availableLocals || []);
+        setAvailableMaterials(data.materialsWithSufficientQuantity || []);
       } catch (error) {
         console.error("Error fetching availability:", error);
+        setError('Failed to fetch available resources.');
       }
     };
 
     fetchAvailability();
   }, [startDate, endDate]);
 
-  // Fetch locals and materials for the event
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch locals for the event
         const localsResponse = await fetch(`http://localhost:3000/events/${eventId}/locals`);
         if (!localsResponse.ok) {
           throw new Error('Failed to fetch locals');
         }
         const localsData = await localsResponse.json();
-        setReservedLocals(localsData.data); // Set reserved locals for the event
+        setReservedLocals(localsData.data || []);
 
-        // Fetch materials for the event
         const materialsResponse = await fetch(`http://localhost:3000/events/${eventId}/materials`);
         if (!materialsResponse.ok) {
           throw new Error('Failed to fetch materials');
         }
         const materialsData = await materialsResponse.json();
-        setReservedMaterials(materialsData.data); // Set reserved materials for the event
+        setReservedMaterials(materialsData.data || []);
       } catch (error) {
-        setError('Error fetching data: ' + error.message);
+        console.error("Error fetching event data:", error);
+        setError('Failed to fetch event resources.');
       }
     };
 
     if (eventId) {
       fetchData();
     }
-  }, [eventId]); // Run this effect when eventId changes
+  }, [eventId]);
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevents default form submission
-    alert('Your request has been sent!'); // Displays an alert
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const isLocalTab = activeTab === 'locals';
+    const selectId = isLocalTab ? 'localSelect' : 'materialSelect';
+    const quantityId = 'materialQuantity';
+
+    const selectedId = document.getElementById(selectId).value;
+    const message = e.target.message.value;
+    const quantity = isLocalTab ? null : parseInt(document.getElementById(quantityId).value, 10);
+
+    if (!selectedId) {
+      alert('Please select an item.');
+      return;
+    }
+
+    try {
+      const endpoint = isLocalTab
+        ? `http://localhost:3000/events/${eventId}/local/${selectedId}`
+        : `http://localhost:3000/events/${eventId}/material/${selectedId}`;
+
+      const body = isLocalTab
+        ? { message }
+        : { message, quantityUsed: quantity };
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`${isLocalTab ? 'Local' : 'Material'} added successfully!`);
+
+        if (isLocalTab) {
+          setReservedLocals([...reservedLocals, data.localXEvent]);
+        } else {
+          setReservedMaterials([...reservedMaterials, data.materialXEvent]);
+        }
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting the request:', error);
+      alert('An error occurred while submitting your request.');
+    }
   };
 
   return (
@@ -92,15 +137,11 @@ const LogisticsPage = ({ eventId, startDate, endDate }) => {
               <label htmlFor="localSelect">Select Local:</label>
               <select id="localSelect" name="local" required>
                 <option value="">Select...</option>
-                {availableLocals.length > 0 ? (
-                  availableLocals.map((local, index) => (
-                    <option key={index} value={local.name}>
-                      {local.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No locals available</option> // Fallback if no locals are available
-                )}
+                {availableLocals.map((local, index) => (
+                  <option key={index} value={local.id}>
+                    {local.name}
+                  </option>
+                ))}
               </select>
               <label htmlFor="localMessage">Message:</label>
               <textarea
@@ -139,15 +180,11 @@ const LogisticsPage = ({ eventId, startDate, endDate }) => {
               <label htmlFor="materialSelect">Select Material:</label>
               <select id="materialSelect" name="material" required>
                 <option value="">Select...</option>
-                {availableMaterials.length > 0 ? (
-                  availableMaterials.map((material, index) => (
-                    <option key={index} value={material.name}>
-                      {material.name}
-                    </option>
-                  ))
-                ) : (
-                  <option value="">No materials available</option> // Fallback if no materials are available
-                )}
+                {availableMaterials.map((material, index) => (
+                  <option key={index} value={material.id}>
+                    {material.name}
+                  </option>
+                ))}
               </select>
               <label htmlFor="materialMessage">Message:</label>
               <textarea
@@ -156,6 +193,15 @@ const LogisticsPage = ({ eventId, startDate, endDate }) => {
                 placeholder="Add your message here..."
                 required
               ></textarea>
+              <label htmlFor="materialQuantity">Quantity:</label>
+              <input
+                type="number"
+                id="materialQuantity"
+                name="quantity"
+                placeholder="Enter quantity"
+                min="1"
+                required
+              />
               <button type="submit">Submit</button>
             </form>
             <h3>List of Reserved Materials</h3>

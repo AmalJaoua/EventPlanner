@@ -1,3 +1,5 @@
+const { toDefaultValue } = require("sequelize/lib/utils");
+
 module.exports = (sequelize, DataTypes) => {
   const LocalXEvent = sequelize.define('LocalXEvent', {
     localId: {
@@ -25,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     status: {
       type: DataTypes.BOOLEAN, // Boolean field
       allowNull: false, // Nullable
+      defaultValue:0,
     },
   }, { tableName: 'LocalXEvents' }); // Explicit table name for junction table
 
