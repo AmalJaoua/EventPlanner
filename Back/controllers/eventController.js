@@ -40,7 +40,7 @@ exports.getAllEventsByUser = async (req, res) => {
     // If the user type is 0 (admin or special user), return all events
     if (user.type === 0) {
       const events = await Event.findAll({
-        attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
+        attributes: ['id', 'name', 'description', 'dateStart','status', 'dateEnd', 'createdAt', 'updatedAt'], // Select only Event fields
       });
 
       if (events.length === 0) {

@@ -4,7 +4,7 @@ import './AdminDashboard.css';
 import { Link } from 'react-router-dom';
 import Delete from './Delete';  
 
-const allEventsAdmin = () => {
+const AllEventsAdmin = () => {
   const [events, setEvents] = useState([]);
   const [showModal, setShowModal] = useState(false);  
   const [eventToDelete, setEventToDelete] = useState(null);  
@@ -40,8 +40,6 @@ const allEventsAdmin = () => {
   const handleModalClose = () => {
     setShowModal(false); 
   };
-
-
 
   return (
     <>
@@ -103,4 +101,4 @@ const allEventsAdmin = () => {
   );
 };
 
-export default allEventsAdmin;
+export default AllEventsAdmin;
