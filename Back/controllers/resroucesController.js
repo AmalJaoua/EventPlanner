@@ -3,36 +3,52 @@ const { Op, where, fn, col } = require('sequelize');
 
 const getAvailableLocalsAndMaterials = async (req, res) => {
   try {
-    const { startDate, endDate } = req.query; // Expect startDate and endDate in YYYY-MM-DD format
-    // Step 1: Get all locals that are not booked during the given date range
-    console.log("date",req.body)
-    // const test = await Local.findAll();
-    // console.log(test)
+    const { startDate, endDate } = req.query; // Expect startDate and endDate in ISO format
+
+    // Log input dates for debugging
+    console.log("Start Date:", startDate);
+    console.log("End Date:", endDate);
+
+    // Step 1: Get all locals that are **booked** during the given date range (Only those used in events)
     const bookedLocals = await Local.findAll({
       include: [
         {
           model: Event,
-          as:'Events',
+          as: 'Events',
           where: {
             [Op.or]: [
               { dateStart: { [Op.between]: [startDate, endDate] } },
               { dateEnd: { [Op.between]: [startDate, endDate] } },
-              { dateStart: { [Op.lte]: startDate },dateEnd: { [Op.gte]: endDate },},
+              {
+                dateStart: { [Op.lte]: startDate },
+                dateEnd: { [Op.gte]: endDate },
+              },
             ],
           },
-          attributes: ['id'], // No need to fetch full Event details
+          attributes: ['id'], // Only need Event ID for checking overlap
         },
       ],
     });
-    const bookedLocalIds = bookedLocals.map((localEvent) => localEvent.localId);
 
+    // Log booked locals for debugging
+    console.log("Booked Locals:", bookedLocals);
+
+    // Extract booked local IDs
+    const bookedLocalIds = bookedLocals.map((localEvent) => localEvent.id); // Get localId from the relation
+    console.log("Booked Local IDs:", bookedLocalIds);
+
+    // Step 2: Get available locals (those not booked in the date range)
     const availableLocals = await Local.findAll({
       where: {
-        id: { [Op.notIn]: bookedLocalIds },
+        id: {
+          [Op.notIn]: bookedLocalIds, // Only get locals that are not booked in the given date range
+        },
       },
     });
 
-    
+    // Log available locals for debugging
+    console.log("Available Locals:", availableLocals);
+
 // Find all materials that are being used during the given date range
 const bookedMaterials = await Material.findAll({
   include: [
