@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Added Link for signup navigation
-import { TokenContext } from "./Tokencontext"; // Import TokenContext
+import { useNavigate, Link } from "react-router-dom";
+import { TokenContext } from "./Tokencontext";
+import { jwtDecode } from "jwt-decode";// Import jwtDecode to decode the token
 import "./Login.css";
 
 const Login = () => {
@@ -10,7 +11,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
-  const { updateToken } = useContext(TokenContext); // Access the updateToken function from TokenContext
+  const { updateToken } = useContext(TokenContext);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,8 +43,17 @@ const Login = () => {
       if (response.ok) {
         // Update the token in context
         updateToken(data.token);
-        alert("Login successful!");
-        navigate("/yourevents"); // Redirect to the dashboard or another page
+
+        // Decode the token to extract user type
+        const decodedToken = jwtDecode(data.token);
+        const userType = decodedToken.type;        
+        if (userType === 0) {
+          navigate("/admin");
+        } else if (userType === 1 || userType === 2) {
+          navigate("/yourevents");
+        } else {
+          alert("Unknown user type. Contact support.");
+        }        
       } else {
         alert(data.error || "Login failed");
       }
