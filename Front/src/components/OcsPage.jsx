@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import './OcsPage.css';
+import { useParams } from 'react-router-dom';
+import { useToken } from './Tokencontext'; 
 
 const OcsPage = () => {
   const [ocs, setOcs] = useState([]);
@@ -12,6 +14,9 @@ const OcsPage = () => {
     confirmPassword: '',
   });
 
+  const { token } = useToken(); // Call `useToken` here, at the top level
+  const { eventId } = useParams(); // Call `useParams` at the top level too
+
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);
   };
@@ -21,34 +26,40 @@ const OcsPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
-      return;
-    }
 
-    
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailPattern.test(formData.email)) {
       alert('Please enter a valid email address.');
       return;
     }
 
-    const newOc = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-    };
+    try {
+      const response = await fetch(`http://localhost:3000/ocs/${eventId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
 
-    setOcs([...ocs, newOc]);
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    });
-    setIsFormVisible(false);
+      const result = await response.json();
+
+      if (response.ok) {
+        alert('OC successfully associated with the event.');
+        setOcs([...ocs, { email: formData.email }]);
+        setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+        setIsFormVisible(false);
+      } else if (result.message === 'User not found. Please create an account first.') {
+        alert('The specified user does not exist. Please ask them to sign up first.');
+      } else {
+        alert(result.message || 'Error occurred during association.');
+      }
+    } catch (error) {
+      alert('Network error, please try again.');
+    }
   };
 
   return (
@@ -66,33 +77,9 @@ const OcsPage = () => {
         <form className="ocForm" onSubmit={handleSubmit}>
           <input
             type="text"
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="email"
             name="email"
             placeholder="Email"
             value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleInputChange}
-            required
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
             onChange={handleInputChange}
             required
           />
@@ -102,16 +89,12 @@ const OcsPage = () => {
 
       <h3>OC List</h3>
       <div className="ocListHeader">
-        <p className="ocHeaderItem">Name</p>
         <p className="ocHeaderItem">Email</p>
-        <p className="ocHeaderItem passwordHeader">Password</p>
       </div>
       <ul className="ocList">
         {ocs.map((oc, index) => (
           <li key={index} className="ocItem">
-            <p className="ocName">{oc.name}</p>
             <p className="ocEmail">{oc.email}</p>
-            <p className="ocPassword">{oc.password}</p>
           </li>
         ))}
       </ul>

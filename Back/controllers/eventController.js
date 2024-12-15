@@ -56,12 +56,12 @@ exports.getAllEventsByUser = async (req, res) => {
         {
           model: User,
           where: { userId },
-          through: { model: UsersXEvents, attributes: [] }, // Prevent attributes from UsersXEvents
-          attributes: [], // Exclude all User fields
+          attributes: ['type'],
         },
       ],
-      attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'status', 'createdAt', 'updatedAt'] 
+      attributes: ['id', 'name', 'description', 'dateStart', 'dateEnd', 'status', 'createdAt', 'updatedAt'],
     });
+    
 
     if (events.length === 0) {
       return res.status(200).json([]);

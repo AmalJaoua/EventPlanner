@@ -7,7 +7,8 @@ const Signup = () => {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    type: '1', // Default to "Organizer"
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Signup = () => {
     if (!formData.password) newErrors.password = 'Password is required';
     if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Returns true if no errors
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -39,6 +40,7 @@ const Signup = () => {
             email: formData.email,
             phoneNumber: formData.phone,
             password: formData.password,
+            type: formData.type,
           }),
         });
 
@@ -105,7 +107,34 @@ const Signup = () => {
             onChange={handleChange}
             className={errors.confirmPassword ? 'error' : ''}
           />
-          {errors.confirmPassword && <span className="errorMessage">{errors.confirmPassword}</span>}
+          {errors.confirmPassword && (
+            <span className="errorMessage">{errors.confirmPassword}</span>
+          )}
+        </div>
+        <div className="formGroup">
+          <label>Role</label>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="type"
+                value="1"
+                checked={formData.type === '1'}
+                onChange={handleChange}
+              />
+              Organizer
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="type"
+                value="2"
+                checked={formData.type === '2'}
+                onChange={handleChange}
+              />
+              OC
+            </label>
+          </div>
         </div>
         <button type="submit" className="signupButton">Sign Up</button>
       </form>

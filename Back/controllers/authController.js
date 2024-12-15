@@ -17,13 +17,13 @@ exports.signup = async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-    const type=1;
-    // Create user
+
+    // Create user with the provided type
     const user = await User.create({
       email,
       phoneNumber,
       password: hashedPassword,
-      type,
+      type, // Organizer (1) or OC (2)
     });
 
     res.status(201).json({ message: 'User created successfully', userId: user.userId });
@@ -31,7 +31,6 @@ exports.signup = async (req, res) => {
     res.status(500).json({ error: 'Error creating user', details: error.message });
   }
 };
-
 // Login controller
 exports.login = async (req, res) => {
   const { email, password } = req.body;
