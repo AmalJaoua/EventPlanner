@@ -1,36 +1,55 @@
 module.exports = (sequelize, DataTypes) => {
-    const Attendee = sequelize.define('Attendee', {
-      phoneNumber: {
-        type: DataTypes.STRING,
-        primaryKey: true, // Unique identifier for attendees
+  const Attendee = sequelize.define('Attendee', {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    phoneNumber: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isEmail: true,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    eventId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Events',
+        key: 'id',
       },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          isEmail: true, // Ensures valid email format
-        },
-      },
-      status: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: 0, // Default status
-      },
+      onDelete: 'CASCADE',
+    },
+  });
+
+  // Add a unique constraint for the composite key
+  Attendee.addHook('afterSync', async () => {
+    await sequelize.query(
+      `ALTER TABLE Attendees ADD UNIQUE (phoneNumber, eventId);`
+    );
+  });
+
+  Attendee.associate = (models) => {
+    Attendee.belongsTo(models.Event, {
+      foreignKey: 'eventId',
+      as: 'event',
+      onDelete: 'CASCADE',
     });
-  
-    // Define the relationship with the Event model
-    Attendee.associate = (models) => {
-      Attendee.belongsTo(models.Event, {
-        foreignKey: 'eventId', // Foreign key linking attendee to an event
-        as: 'event',           // Alias for accessing the related event
-        onDelete: 'CASCADE',   // Deletes attendees if the associated event is deleted
-      });
-    };
-  
-    return Attendee;
   };
-  
+
+  return Attendee;
+};

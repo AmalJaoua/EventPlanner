@@ -14,8 +14,8 @@ const OcsPage = () => {
     confirmPassword: '',
   });
 
-  const { token } = useToken(); // Call `useToken` here, at the top level
-  const { eventId } = useParams(); // Call `useParams` at the top level too
+  const { token } = useToken(); 
+  const { eventId } = useParams(); 
 
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);

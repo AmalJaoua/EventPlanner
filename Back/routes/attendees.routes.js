@@ -5,12 +5,13 @@ const { authenticate } = require('../middleware/authMiddleware'); // Import auth
 const attendeesController = require('../controllers/attendeesController');
 
 // Route to get all attendees
-router.get('/',authenticate, attendeesController.getAttendees);
+router.get('/:eventId',authenticate, attendeesController.getAttendees);
 
 // Route to clear attendees
-router.delete('/clear',authenticate, attendeesController.clearAttendees);
+router.delete('/:eventId/clear',authenticate, attendeesController.clearAttendees);
 
 // Route to add new attendees
-router.post('/',authenticate, attendeesController.addAttendees);
+router.post('/:eventId',authenticate, attendeesController.addAttendees);
+router.put('/update-status', attendeesController.updateStatus);
 
 module.exports = router;
