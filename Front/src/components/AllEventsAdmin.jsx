@@ -1,48 +1,105 @@
 import React, { useState, useEffect } from 'react';
-import { Edit, Trash2 } from 'lucide-react'; 
+import { Edit, Trash2, Plus } from 'lucide-react';
 import './AdminDashboard.css';
 import { Link } from 'react-router-dom';
-import Delete from './Delete';  
+import Delete from './Delete';
+import { useToken } from './Tokencontext'; // Assuming you're using a context to store the token
 
 const AllEventsAdmin = () => {
+ 
+  const { token } = useToken(); // Get the token from context or any other state management solution
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(false);  
-  const [eventToDelete, setEventToDelete] = useState(null);  
+  const [showModal, setShowModal] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch events from the backend with authorization token
   useEffect(() => {
     const fetchEvents = async () => {
-      const eventList = [
-        { id: 1, name: "WiEmpower 1.0", date: "2024-12-21" },
-        { id: 2, name: "AI Workshop", date: "2024-12-05" },
-        { id: 3, name: "Hackathon", date: "2024-12-10" },
-        { id: 5, name: "Past Event 1", date: "2024-11-25" },
-        { id: 6, name: "Past Event 2", date: "2024-11-20" },
-      ];
-      setEvents(eventList);
+      try {
+        const response = await fetch('http://localhost:3000/events', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+
+        const data = await response.json();
+        setEvents(data);
+      } catch (error) {
+        setError('Error fetching events');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchEvents();
-  }, []);
+    if (token) {
+      fetchEvents();
+    }
+  }, [token]);
 
-  const upcomingEvents = events.filter(event => new Date(event.date) > new Date());
-  const pastEvents = events.filter(event => new Date(event.date) <= new Date());
-
+  // Handle delete click
   const handleDeleteClick = (eventId) => {
-    setEventToDelete(eventId); 
+    setEventToDelete(eventId);
     setShowModal(true);
   };
 
-  const handleDelete = () => {
-    setEvents(prevEvents => prevEvents.filter(event => event.id !== eventToDelete)); 
-    setShowModal(false); 
+  // Delete event by making a DELETE request to the backend with authorization token
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/events/${eventToDelete}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the event');
+      }
+     
+      // Remove event from local state after successful deletion
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventToDelete));
+      setShowModal(false);
+      
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
   };
 
   const handleModalClose = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
+
+  // Show loading or error message
+  if (loading) {
+    return <p>Loading events...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  const upcomingEvents = events.filter((event) => new Date(event.dateEnd) > new Date());
+  const pastEvents = events.filter((event) => new Date(event.dateEnd) <= new Date());
 
   return (
     <>
+      <div className="headerSection">
+        <h2>All Events</h2>
+        <Link to="/create-event">
+          <button className="plusButton">
+            <Plus size={30} color="#244855" />
+          </button>
+        </Link>
+      </div>
+
       <h3>Upcoming Events</h3>
       <div className="eventListHeader">
         <p className="headerItem">Name</p>
@@ -50,8 +107,8 @@ const AllEventsAdmin = () => {
         <p className="headerItem actionHeader">Action</p>
       </div>
       <ul className="eventList">
-        {upcomingEvents.map((event, index) => (
-          <li key={index} className="eventItem">
+        {upcomingEvents.map((event) => (
+          <li key={event.id} className="eventItem">
             <p className="eventName">{event.name}</p>
             <p className="eventDate">{event.date}</p>
             <div className="eventActions">
@@ -75,28 +132,26 @@ const AllEventsAdmin = () => {
         <p className="headerItem actionHeader">Action</p>
       </div>
       <ul className="eventList">
-        {pastEvents.map((event, index) => (
-          <li key={index} className="eventItem">
+        {pastEvents.map((event) => (
+          <li key={event.id} className="eventItem">
             <p className="eventName">{event.name}</p>
             <p className="eventDate">{event.date}</p>
             <div className="eventActions">
-              <button className="viewDetailsBtn">
-                View Details
-              </button>
+              <Link to={`/event/${event.id}`}>
+                <button className="viewDetailsBtn">View Details</button>
+              </Link>
             </div>
           </li>
         ))}
       </ul>
 
       {showModal && (
-        <Delete 
-          onClose={handleModalClose} 
+        <Delete
+          onClose={handleModalClose}
           onDelete={handleDelete}
-          eventId={eventToDelete} 
+          eventId={eventToDelete}
         />
       )}
-
-     
     </>
   );
 };

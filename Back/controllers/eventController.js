@@ -223,6 +223,18 @@ exports.getLocalsByEvent = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
   try {
     const user = req.user;
+
+    // Check if the user is type 0, which allows deleting any event
+    if (user.type === 0) {
+      const event = await Event.findByPk(req.params.eventId);
+      if (!event) {
+        return res.status(404).json({ error: 'Event not found' });
+      }
+      await event.destroy();
+      return res.status(200).json({ message: 'Event deleted successfully' });
+    }
+
+    // Check if the user is authorized to delete the event
     const userEvent = await UsersXEvents.findOne({
       where: {
         userId: user.id,
