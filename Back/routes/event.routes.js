@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createMaterialXEvent, createLocalXEvent,getMaterialsByEvent,getLocalsByEvent,deleteEvent,getEventById,getAllEventsByUser,createEvent } = require('../controllers/eventController');
 const eventController = require('../controllers/eventController');
-const { authenticate } = require('../middleware/authMiddleware');
+const { authenticate, authorizeAdmin } = require('../middleware/authMiddleware');
 
 // Route to create a new event (protected)
 router.post('/', authenticate, createEvent);

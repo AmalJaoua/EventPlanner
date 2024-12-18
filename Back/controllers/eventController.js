@@ -311,3 +311,87 @@ exports.createLocalXEvent = async (req, res) => {
   }
 };
 
+
+
+exports.getAllLocalsWithEvents = async (req, res) => {
+  try {
+    // Fetch locals that exist in LocalXEvents and have associated events
+    const localsWithPendingEvents = await Local.findAll({
+      include: [
+        {
+          model: Event,
+          as: 'Events', // Alias defined in the association
+          through: {
+            where: { status: 0 }, // Filter by status in LocalXEvents
+            attributes: [], // Exclude intermediate table fields
+          },
+          required: true, // Ensures only locals with entries in LocalXEvents are included
+          attributes: ['id', 'name', 'dateStart'], // Include desired event fields
+        },
+      ],
+    });
+
+    if (!localsWithPendingEvents || localsWithPendingEvents.length === 0) {
+      return res.status(404).json({ message: 'No locals with pending events found' });
+    }
+
+    // Transform the data into a simpler response format
+    const response = localsWithPendingEvents.map((local) => ({
+      local: {
+        id: local.id,
+        name: local.name,
+      },
+      events: local.Events.map((event) => ({
+        id: event.id,
+        name: event.name,
+        dateStart: event.dateStart,
+      })),
+    }));
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error fetching locals with events:', error);
+    res.status(500).json({ error: 'Failed to fetch locals and events', details: error.message });
+  }
+};
+exports.getAllMaterialsWithEvents = async (req, res) => {
+  try {
+    // Fetch materials that exist in MaterialXEvents and have associated events
+    const materialsWithPendingEvents = await Material.findAll({
+      include: [
+        {
+          model: Event,
+          as: 'Events', // Alias defined in the association
+          through: {
+            where: { status: 0 }, // Filter by status in MaterialXEvents
+            attributes: [], // Exclude intermediate table fields
+          },
+          required: true, // Ensures only materials with entries in MaterialXEvents are included
+          attributes: ['id', 'name', 'dateStart'], // Include desired event fields
+        },
+      ],
+    });
+
+    if (!materialsWithPendingEvents || materialsWithPendingEvents.length === 0) {
+      return res.status(404).json({ message: 'No materials with pending events found' });
+    }
+
+    // Transform the data into a simpler response format
+    const response = materialsWithPendingEvents.map((material) => ({
+      material: {
+        id: material.id,
+        name: material.name,
+      },
+      events: material.Events.map((event) => ({
+        id: event.id,
+        name: event.name,
+        dateStart: event.dateStart,
+      })),
+    }));
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('Error fetching materials with events:', error);
+    res.status(500).json({ error: 'Failed to fetch materials and events', details: error.message });
+  }
+};
