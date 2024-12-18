@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import './OcsPage.css';
 import { useParams } from 'react-router-dom';
-import { useToken } from './Tokencontext'; 
+import { useToken } from './Tokencontext';
 
 const OcsPage = () => {
   const [ocs, setOcs] = useState([]);
@@ -14,8 +14,32 @@ const OcsPage = () => {
     confirmPassword: '',
   });
 
-  const { token } = useToken(); 
-  const { eventId } = useParams(); 
+  const { token } = useToken();
+  const { eventId } = useParams();
+
+  useEffect(() => {
+    const fetchOCs = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/ocs/${eventId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const result = await response.json();
+        if (response.ok) {
+          setOcs(result.data);
+        } else {
+          alert(result.message || 'Error retrieving OCs.');
+        }
+      } catch (error) {
+        alert('Network error, please try again.');
+      }
+    };
+
+    fetchOCs();
+  }, [eventId, token]);
 
   const toggleForm = () => {
     setIsFormVisible(!isFormVisible);
