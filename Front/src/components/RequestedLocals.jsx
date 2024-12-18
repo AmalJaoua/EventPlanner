@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react'; 
+import { X, Check } from 'lucide-react';
 import './AdminDashboard.css';
 import { useToken } from './Tokencontext'; // Assuming you're using a context to store the token
 
@@ -36,7 +36,44 @@ const RequestedLocals = () => {
     };
 
     fetchLocals();
-  }, []);
+  }, [token]);
+
+  const handleStatusChange = async (localId, eventId, status) => {
+    // Log the localId, eventId, and status to the console
+    console.log('Sending PUT request with localId:', localId, 'eventId:', eventId, 'status:', status);
+  
+    try {
+      const response = await fetch('http://localhost:3000/resources/localXevent/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ localId, eventId, status }), // Pass localId, eventId, and status
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+  
+      const updatedLocal = locals.map(local => {
+        if (local.id === localId) {
+          local.events = local.events.map(event => {
+            if (event.id === eventId) {
+              event.status = status; // Update the event status locally
+            }
+            return event;
+          });
+        }
+        return local;
+      });
+  
+      setLocals(updatedLocal); // Update the state to reflect the status change
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setError('Failed to update status');
+    }
+  };
 
   if (loading) {
     return <p>Loading locals...</p>;
@@ -63,10 +100,16 @@ const RequestedLocals = () => {
               <p className="eventName">{event.name}</p>
               <p className="eventName">{new Date(event.dateStart).toLocaleString()}</p>
               <div className="eventActions">
-                <button className="approveBtn">
+                <button
+                  className="approveBtn"
+                  onClick={() => handleStatusChange(local.local.id, event.id, 1)} // 1 for approve
+                >
                   <Check size={20} color="green" />
                 </button>
-                <button className="rejectBtn">
+                <button
+                  className="rejectBtn"
+                  onClick={() => handleStatusChange(local.local.id, event.id, 0)} // 0 for reject
+                >
                   <X size={20} color="red" />
                 </button>
               </div>

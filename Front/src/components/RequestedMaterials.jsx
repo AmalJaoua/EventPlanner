@@ -37,6 +37,44 @@ const RequestedMaterials = () => {
     fetchMaterials();
   }, [token]);
 
+  const handleStatusChange = async (materialId, eventId, status) => {
+    try {
+      console.log('Sending PUT request with materialId:', materialId, 'eventId:', eventId, 'status:', status);
+
+      const response = await fetch('http://localhost:3000/resources/materialXevent/update', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ materialId, eventId, status }), // Pass materialId, eventId, and status
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+
+      // Optimistically update the status in the UI
+      const updatedMaterials = materials.map((material) => {
+        if (material.material.id === materialId) {
+          material.events = material.events.map((event) => {
+            if (event.id === eventId) {
+              event.status = status; // Update the status of the event
+            }
+            return event;
+          });
+        }
+        return material;
+      });
+
+      setMaterials(updatedMaterials); // Update the state to reflect the status change
+
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setError('Failed to update status');
+    }
+  };
+
   if (loading) {
     return <p>Loading materials...</p>;
   }
@@ -62,10 +100,16 @@ const RequestedMaterials = () => {
               <p className="eventName">{event.name}</p>
               <p className="eventName">{new Date(event.dateStart).toLocaleString()}</p>
               <div className="eventActions">
-                <button className="approveBtn">
+                <button 
+                  className="approveBtn" 
+                  onClick={() => handleStatusChange(material.material.id, event.id, 1)} // Approve status
+                >
                   <Check size={20} color="green" />
                 </button>
-                <button className="rejectBtn">
+                <button 
+                  className="rejectBtn" 
+                  onClick={() => handleStatusChange(material.material.id, event.id, 0)} // Reject status
+                >
                   <X size={20} color="red" />
                 </button>
               </div>

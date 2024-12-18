@@ -395,3 +395,94 @@ exports.getAllMaterialsWithEvents = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch materials and events', details: error.message });
   }
 };
+
+exports.updateLocalXEventStatus = async (req, res) => {
+  const { localId, eventId, status } = req.body; // Extract localId, eventId, and status from the request body
+
+  try {
+    // Validate the input
+    if (![0, 1, 2].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+    
+    // Ensure both localId and eventId are provided
+    if (!localId || !eventId) {
+      return res.status(400).json({ message: 'localId and eventId are required' });
+    }
+
+    // Find the LocalXEvent based on localId and eventId
+    const localXEvent = await LocalXEvent.findOne({
+      where: {
+        localId: localId,
+        eventId: eventId
+      }
+    });
+
+    if (!localXEvent) {
+      return res.status(404).json({ message: 'LocalXEvent not found' });
+    }
+
+    // Update the status
+    localXEvent.status = status;
+    await localXEvent.save(); // Save the updated record
+
+    // Respond with the updated LocalXEvent
+    res.status(200).json({
+      message: 'Status updated successfully',
+      localXEvent: {
+        localId: localXEvent.localId,
+        eventId: localXEvent.eventId,
+        status: localXEvent.status
+      }
+    });
+
+  } catch (error) {
+    console.error('Error updating LocalXEvent status:', error);
+    res.status(500).json({ error: 'Failed to update LocalXEvent status', details: error.message });
+  }
+};
+exports.updateMaterialXEventStatus = async (req, res) => {
+  const { materialId, eventId, status } = req.body; // Extract localId, eventId, and status from the request body
+
+  try {
+    // Validate the input
+    if (![0, 1, 2].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status value' });
+    }
+    
+    // Ensure both localId and eventId are provided
+    if (!materialId || !eventId) {
+      return res.status(400).json({ message: 'localId and eventId are required' });
+    }
+
+    // Find the LocalXEvent based on localId and eventId
+    const materialXEvent = await MaterialXEvent.findOne({
+      where: {
+        materialId: materialId,
+        eventId: eventId
+      }
+    });
+
+    if (!materialXEvent) {
+      return res.status(404).json({ message: 'LocalXEvent not found' });
+    }
+
+    // Update the status
+    materialXEvent.status = status;
+    await materialXEvent.save(); // Save the updated record
+
+    // Respond with the updated LocalXEvent
+    res.status(200).json({
+      message: 'Status updated successfully',
+      materialXEvent: {
+        materialId: materialXEvent.materialId,
+        eventId: materialXEvent.eventId,
+        status: materialXEvent.status
+      }
+    });
+
+  } catch (error) {
+    console.error('Error updating LocalXEvent status:', error);
+    res.status(500).json({ error: 'Failed to update LocalXEvent status', details: error.message });
+  }
+};
