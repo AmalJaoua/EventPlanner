@@ -70,7 +70,7 @@ You will need **two terminals** running at the same time:
 
 ### Final Step
 
-Open your browser and go to the local address given by the frontend server (typically `http://localhost:3000` or as specified by the terminal). 
+Open your browser and go to the local address given by the frontend server (typically `http://localhost:XXXX` or as specified by the terminal). 
 
 Once both servers are running, the application should be fully functional.
 
