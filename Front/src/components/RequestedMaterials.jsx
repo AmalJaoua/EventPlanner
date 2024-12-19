@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Check } from 'lucide-react'; 
+import React, { useState, useEffect, useCallback } from 'react';
+import { X, Check } from 'lucide-react';
 import './AdminDashboard.css';
 import { useToken } from './Tokencontext'; // Assuming you're using a context to store the token
 
@@ -9,45 +9,45 @@ const RequestedMaterials = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/resources/adminMaterials', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // Use useCallback for fetchMaterials
+  const fetchMaterials = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:3000/resources/adminMaterials', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch materials');
-        }
-
-        const data = await response.json();
-        setMaterials(data);
-      } catch (error) {
-        console.error('Error fetching materials:', error);
-        setError('Failed to fetch materials');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to fetch materials');
       }
-    };
 
-    fetchMaterials();
+      const data = await response.json();
+      setMaterials(data);
+    } catch (error) {
+      console.error('Error fetching materials:', error);
+      setError('Failed to fetch materials');
+    } finally {
+      setLoading(false);
+    }
   }, [token]);
+
+  useEffect(() => {
+    fetchMaterials();
+  }, [fetchMaterials]); // Run fetchMaterials when the component mounts
 
   const handleStatusChange = async (materialId, eventId, status) => {
     try {
-      console.log('Sending PUT request with materialId:', materialId, 'eventId:', eventId, 'status:', status);
-
       const response = await fetch('http://localhost:3000/resources/materialXevent/update', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ materialId, eventId, status }), // Pass materialId, eventId, and status
+        body: JSON.stringify({ materialId, eventId, status }),
       });
 
       if (!response.ok) {
@@ -67,8 +67,8 @@ const RequestedMaterials = () => {
         return material;
       });
 
-      setMaterials(updatedMaterials); // Update the state to reflect the status change
-
+      setMaterials(updatedMaterials);
+      await fetchMaterials(); // Refetch materials to ensure data is up to date
     } catch (error) {
       console.error('Error updating status:', error);
       setError('Failed to update status');
@@ -83,6 +83,10 @@ const RequestedMaterials = () => {
     return <p>{error}</p>;
   }
 
+  if (materials.length === 0) {
+    return <h2>No materials requests submitted</h2>;
+  }
+
   return (
     <>
       <h3>Requested Materials</h3>
@@ -93,29 +97,29 @@ const RequestedMaterials = () => {
         <p className="headerItem actionHeader">Action</p>
       </div>
       <ul className="eventList">
-        {materials.map((material) => (
+        {materials.map((material) =>
           material.events.map((event) => (
             <li key={`${material.material.id}-${event.id}`} className="eventItem">
               <p className="eventName">{material.material.name}</p>
               <p className="eventName">{event.name}</p>
               <p className="eventName">{new Date(event.dateStart).toLocaleString()}</p>
               <div className="eventActions">
-                <button 
-                  className="approveBtn" 
-                  onClick={() => handleStatusChange(material.material.id, event.id, 1)} // Approve status
+                <button
+                  className="approveBtn"
+                  onClick={() => handleStatusChange(material.material.id, event.id, 1)}
                 >
                   <Check size={20} color="green" />
                 </button>
-                <button 
-                  className="rejectBtn" 
-                  onClick={() => handleStatusChange(material.material.id, event.id, 0)} // Reject status
+                <button
+                  className="rejectBtn"
+                  onClick={() => handleStatusChange(material.material.id, event.id, null)}
                 >
                   <X size={20} color="red" />
                 </button>
               </div>
             </li>
           ))
-        ))}
+        )}
       </ul>
     </>
   );

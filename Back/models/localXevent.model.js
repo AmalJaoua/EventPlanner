@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.BOOLEAN, // Boolean field
-      allowNull: false, // Nullable
+      allowNull: true, 
       defaultValue:0,
     },
   }, { tableName: 'LocalXEvents' }); // Explicit table name for junction table

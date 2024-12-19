@@ -25,7 +25,6 @@ exports.createEvent = async (req, res) => {
   }
 };
 
-// Get all events
 // Get all events by user
 exports.getAllEventsByUser = async (req, res) => {
   try {
@@ -223,7 +222,7 @@ exports.getLocalsByEvent = async (req, res) => {
 exports.deleteEvent = async (req, res) => {
   try {
     const user = req.user;
-
+    
     // Check if the user is type 0, which allows deleting any event
     if (user.type === 0) {
       const event = await Event.findByPk(req.params.eventId);
@@ -331,10 +330,12 @@ exports.getAllLocalsWithEvents = async (req, res) => {
       ],
     });
 
-    if (!localsWithPendingEvents || localsWithPendingEvents.length === 0) {
+    if (!localsWithPendingEvents) {
       return res.status(404).json({ message: 'No locals with pending events found' });
     }
-
+    if( localsWithPendingEvents.length === 0){
+      return res.status(200).json([]);
+    }
     // Transform the data into a simpler response format
     const response = localsWithPendingEvents.map((local) => ({
       local: {
@@ -372,10 +373,12 @@ exports.getAllMaterialsWithEvents = async (req, res) => {
       ],
     });
 
-    if (!materialsWithPendingEvents || materialsWithPendingEvents.length === 0) {
+    if (!materialsWithPendingEvents ) {
       return res.status(404).json({ message: 'No materials with pending events found' });
     }
-
+    if(materialsWithPendingEvents.length === 0){
+      return res.status(200).json([]);
+    }
     // Transform the data into a simpler response format
     const response = materialsWithPendingEvents.map((material) => ({
       material: {
@@ -401,7 +404,7 @@ exports.updateLocalXEventStatus = async (req, res) => {
 
   try {
     // Validate the input
-    if (![0, 1, 2].includes(status)) {
+    if (![0, 1, null].includes(status)) {
       return res.status(400).json({ message: 'Invalid status value' });
     }
     
@@ -446,7 +449,7 @@ exports.updateMaterialXEventStatus = async (req, res) => {
 
   try {
     // Validate the input
-    if (![0, 1, 2].includes(status)) {
+    if (![0, 1, null].includes(status)) {
       return res.status(400).json({ message: 'Invalid status value' });
     }
     

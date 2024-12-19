@@ -1,20 +1,23 @@
 'use strict';
-
-const { defaultValueSchemable } = require("sequelize/lib/utils");
-
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('LocalXEvents', {
-      localId: {
+    await queryInterface.createTable('MaterialXEvents', {
+      MxEid: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      materialId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Locals',
+          model: 'Materials',
           key: 'id',
         },
         allowNull: false,
         primaryKey: true,
         onDelete: 'CASCADE',
       },
+      
       eventId: {
         type: Sequelize.INTEGER,
         references: {
@@ -25,6 +28,12 @@ module.exports = {
         primaryKey: true,
         onDelete: 'CASCADE',
       },
+
+      quantityUsed: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
       message: {
         type: Sequelize.TEXT, // Use Sequelize.TEXT if longer messages are needed
         allowNull: true, // Nullable
@@ -32,13 +41,13 @@ module.exports = {
       status: {
         type: Sequelize.BOOLEAN,
         defaultValue: 0,
-        allowNull: false, // 
+        allowNull: true, // 
       },
       createdAt: Sequelize.DATE,
       updatedAt: Sequelize.DATE,
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable('LocalXEvents');
+    await queryInterface.dropTable('MaterialXEvents');
   },
 };

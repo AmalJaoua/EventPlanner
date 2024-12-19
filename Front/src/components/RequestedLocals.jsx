@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { X, Check } from 'lucide-react';
 import './AdminDashboard.css';
-import { useToken } from './Tokencontext'; // Assuming you're using a context to store the token
+import { useToken } from './Tokencontext';
 
 const RequestedLocals = () => {
   const { token } = useToken(); // Get the token from context or any other state management solution
@@ -10,38 +10,37 @@ const RequestedLocals = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchLocals = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/resources/adminLocals', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // Use useCallback for fetchLocals
+  const fetchLocals = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:3000/resources/adminLocals', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch locals');
-        }
-
-        const data = await response.json();
-        setLocals(data);
-      } catch (error) {
-        console.error('Error fetching locals:', error);
-        setError('Failed to fetch locals');
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to fetch locals');
       }
-    };
 
+      const data = await response.json();
+      setLocals(data);
+    } catch (error) {
+      console.error('Error fetching locals:', error);
+      setError('Failed to fetch locals');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]); // Ensure fetchLocals has correct dependencies
+
+  useEffect(() => {
     fetchLocals();
-  }, [token]);
+  }, [fetchLocals]); // Run fetchLocals when the component mounts
 
   const handleStatusChange = async (localId, eventId, status) => {
-    // Log the localId, eventId, and status to the console
-    console.log('Sending PUT request with localId:', localId, 'eventId:', eventId, 'status:', status);
-  
     try {
       const response = await fetch('http://localhost:3000/resources/localXevent/update', {
         method: 'PUT',
@@ -49,16 +48,16 @@ const RequestedLocals = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ localId, eventId, status }), // Pass localId, eventId, and status
+        body: JSON.stringify({ localId, eventId, status }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update status');
       }
-  
-      const updatedLocal = locals.map(local => {
+
+      const updatedLocal = locals.map((local) => {
         if (local.id === localId) {
-          local.events = local.events.map(event => {
+          local.events = local.events.map((event) => {
             if (event.id === eventId) {
               event.status = status; // Update the event status locally
             }
@@ -67,8 +66,9 @@ const RequestedLocals = () => {
         }
         return local;
       });
-  
-      setLocals(updatedLocal); // Update the state to reflect the status change
+
+      setLocals(updatedLocal);
+      await fetchLocals(); // Refetch the data after updating
     } catch (error) {
       console.error('Error updating status:', error);
       setError('Failed to update status');
@@ -83,6 +83,10 @@ const RequestedLocals = () => {
     return <p>{error}</p>;
   }
 
+  if (locals.length === 0) {
+    return <h2>No locals requests submitted</h2>;
+  }
+
   return (
     <>
       <h3>Requested Locals</h3>
@@ -93,7 +97,7 @@ const RequestedLocals = () => {
         <p className="headerItem actionHeader">Action</p>
       </div>
       <ul className="eventList">
-        {locals.map((local) => (
+        {locals.map((local) =>
           local.events.map((event) => (
             <li key={`${local.id}-${event.id}`} className="eventItem">
               <p className="eventName">{local.local.name}</p>
@@ -102,20 +106,20 @@ const RequestedLocals = () => {
               <div className="eventActions">
                 <button
                   className="approveBtn"
-                  onClick={() => handleStatusChange(local.local.id, event.id, 1)} // 1 for approve
+                  onClick={() => handleStatusChange(local.local.id, event.id, 1)}
                 >
                   <Check size={20} color="green" />
                 </button>
                 <button
                   className="rejectBtn"
-                  onClick={() => handleStatusChange(local.local.id, event.id, 0)} // 0 for reject
+                  onClick={() => handleStatusChange(local.local.id, event.id, null)}
                 >
                   <X size={20} color="red" />
                 </button>
               </div>
             </li>
           ))
-        ))}
+        )}
       </ul>
     </>
   );
