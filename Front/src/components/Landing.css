@@ -13,7 +13,9 @@ body {
     text-align: center;
     color: #244855;
   }
-  
+  .logolanding{
+    width: 15%;
+  }
   .title {
     font-size: 3rem;
     margin-bottom: 1rem;

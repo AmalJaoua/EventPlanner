@@ -6,6 +6,9 @@ import './SidebarEvent.css';
 const SidebarEvent = ({ event }) => {
   return (
     <div className="sidebar">
+       <Link className="logoSideBa" to="/yourevents">
+          <img className="logoSideBar" src="/logoText.png" alt="" />
+        </Link>
       <div className="titleSideBar">
         <Link to="/yourevents">
           <button className="backButton"><CircleArrowLeft /></button>

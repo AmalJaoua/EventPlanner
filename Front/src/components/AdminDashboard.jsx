@@ -3,12 +3,16 @@ import RequestedEventsAdmin from "./RequestedEventsAdmin";
 import AllEventsAdmin from "./AllEventsAdmin";
 import RequestedLocals from "./RequestedLocals"; 
 import RequestedMaterials from "./RequestedMaterials"; 
+import { Link } from 'react-router-dom';
 import "./AdminDashboard.css";
 import "./SidebarAdmin.css";
 
 const SidebarAdmin = ({ setActivePage }) => {
   return (
     <div className="sidebarAdmin">
+      <Link className="logoSideBa" to="/yourevents">
+        <img className="logoSideBar" src="/logoText.png" alt="" />
+        </Link>
       <h2>Admin</h2>
       <div className="detailsAdmin">
         <button className="sidebarLink" onClick={() => setActivePage("ue")}>

@@ -1,7 +1,9 @@
 .eventsPage {
     margin: 40px;
   }
-  
+.logoYourEvents{
+  width: 15%;
+}
   .headerSection {
     display: flex;
     align-items: center;

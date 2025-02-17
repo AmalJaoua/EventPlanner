@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import './Signup.css';
 
 const Signup = () => {
@@ -59,6 +59,11 @@ const Signup = () => {
 
   return (
     <div className="signupContainer">
+      <div className="wrapperLogin">
+        <Link className="logoSideBa" to="/">
+            <img className="logoSideBar" src="/logoText.png" alt="" />
+         </Link>
+         </div>
       <h2>Signup</h2>
       <form className="signupForm" onSubmit={handleSubmit}>
         <div className="formGroup">

@@ -46,7 +46,6 @@ const YourEvents = () => {
     }
   }, [token]);
 
-  // Fetch events
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -131,7 +130,10 @@ const YourEvents = () => {
       ) : (
         <>
           <div className="headerSection">
-            <h2>Your Events</h2>
+            <div >
+              <img className="logoYourEvents" src="/logoText.png" alt="" />
+              <h2>Your Events</h2>
+            </div>
             {userType !== 2 && ( 
               <button className="plusButton" onClick={handleRequestEventClick}>
                 <Plus size={30} color="#244855" />

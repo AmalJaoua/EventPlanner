@@ -1,4 +1,4 @@
-/* Sidebar container */
+
 .sidebarAdmin {
     width: 25%;
     padding: 20px 4px;
@@ -12,8 +12,7 @@
     top: 0;
     left: 0;
   }
-  
-  /* Sidebar title */
+
   .sidebarAdmin h2 {
     font-size: 2em;
     color: #244855;
@@ -21,7 +20,6 @@
     align-self: stretch;
   }
   
-  /* Sidebar details container */
   .detailsAdmin {
     flex-grow: 0.5;
     display: flex;
@@ -30,8 +28,7 @@
     text-align: center;
     width: 100%;
   }
-  
-  /* Sidebar links */
+
   .sidebarLink {
     font-size: 1.15em;
     color: #E64833;
@@ -46,14 +43,12 @@
     max-width: 90%;
   }
   
-  /* Link hover effect */
   .sidebarLink:hover {
     background-color: #E64833;
     color: #FBE9D0;
     cursor: pointer;
   }
   
-  /* Active link styling */
   .sidebarLink.active {
     background-color: #874F41;
     color: #FBE9D0;

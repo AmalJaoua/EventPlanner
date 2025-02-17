@@ -65,6 +65,11 @@ const Login = () => {
 
   return (
     <div className="loginContainer">
+        <div className="wrapperLogin">
+        <Link className="logoSideBa" to="/">
+            <img className="logoSideBar" src="/logoText.png" alt="" />
+         </Link>
+         </div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit} className="loginForm">
         <div className="formGroup">

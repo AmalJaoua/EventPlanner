@@ -5,7 +5,12 @@
     height: 100vh; 
     overflow: hidden; 
   }
-
+.logoSideBar{
+  width: 50%;
+}
+.logoSideBa{
+  text-align: center;
+}
   .eventsPageAdmin {
     width: 75%; 
     padding: 20px; 
