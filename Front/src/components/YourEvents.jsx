@@ -152,11 +152,11 @@ const YourEvents = () => {
                 <p className="eventName">{event.name}</p>
                 <p className="eventDate">{new Date(event.dateStart).toISOString().split('T')[0]}</p>
                 <div className="eventActions">
-                  <Link to={`/event/${event.id}`}>
-                    <button className="editBtn">
-                      <Edit size={20} color="#4C8BFF" />
-                    </button>
-                  </Link>
+                <Link to={userType === 2 ? `/event/oc/${event.id}` : `/event/${event.id}`}>
+  <button className="editBtn">
+    <Edit size={20} color="#4C8BFF" />
+  </button>
+</Link>
                   {userType !== 2 && ( 
                     <button
                       className="deleteBtn"
